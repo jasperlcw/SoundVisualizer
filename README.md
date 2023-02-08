@@ -1,4 +1,3 @@
-
 # CMPT 433 Final Project - LED Visualizer
 ## Project Idea (note that the zen cape might be different between members):
 * Baseline idea is to work with LEDs and to control it with hardware buttons and through the local network through UDP
