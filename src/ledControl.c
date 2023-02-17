@@ -1,9 +1,4 @@
 #include "include/ledControl.h"
 
-static LED_Mode currentMode;
-
-// Function prototypes for displaying the current mode.
-static void displayOff(void);
-static void displayRainbow(void);
-static void displayVisualizer(void);
-static void displayTime(void);
+// TODO: implement this to be a module that just displays the given light matrix
+// Don't think this needs to be a thread

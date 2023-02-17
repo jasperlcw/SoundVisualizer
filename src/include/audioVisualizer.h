@@ -6,10 +6,20 @@
 #ifndef _VISUALIZER_H_
 #define _VISUALIZER_H_
 
-// Initializes the thread that runs the program itself.
-void Visualizer_init(void);
+typedef enum LED_Mode
+{
+    OFF,
+    RAINBOW,
+    VISUALIZER,
+    TIME,
+    NUM_MODES
+} LED_Mode;
 
-// Cleans up the thread that runs the program itself.
-void Visualizer_cleanup(void);
+// Initializes the thread that runs the program itself.
+// This function blocks until shutdown is called.
+void Visualizer_run(void);
+
+// Shuts down and cleans up the thread that runs the program itself.
+void Visualizer_shutdown(void);
 
 #endif

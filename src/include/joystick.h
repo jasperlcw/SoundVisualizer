@@ -12,6 +12,7 @@ typedef enum JS_Direction
     DOWN,
     RIGHT,
     LEFT,
+    PRESS_IN,
     NONE
 } JS_Direction;
 
