@@ -1,10 +1,8 @@
 #include "include/udpComms.h"
 
 
-bool isRunning = true;
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
-
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
@@ -12,7 +10,6 @@ char previousCmd[MSG_MAX_LEN];
 
 // Initializes the UDP thread.
 void UDP_init(void) {
-    isRunning = true;
     sem_init(&UDPRunBlocker, 0, 0);
     pthread_create(&UDPThreadID, NULL, StartUDPServer, NULL);
 
@@ -23,10 +20,10 @@ void UDP_init(void) {
 
 // Cleans up the UDP thread.
 void UDP_cleanup(void) {
-    isRunning = false;
     pthread_join(UDPThreadID, NULL);
     sem_post(&UDPRunBlocker);
 }
+
 
 void* StartUDPServer(){
     // Address

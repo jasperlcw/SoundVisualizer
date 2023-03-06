@@ -22,6 +22,8 @@
 #define MSG_MAX_LEN 1024
 #define PORT        12345
 
+#include "../Utility.h"
+
 
 // Initializes the UDP thread.
 void UDP_init(void);
