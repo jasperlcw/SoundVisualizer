@@ -1,10 +1,9 @@
 #include "include/udpComms.h"
+#include "audioMixer/audioMixer_template.h"
 
 
-bool isRunning = true;
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
-
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
@@ -12,7 +11,6 @@ char previousCmd[MSG_MAX_LEN];
 
 // Initializes the UDP thread.
 void UDP_init(void) {
-    isRunning = true;
     sem_init(&UDPRunBlocker, 0, 0);
     pthread_create(&UDPThreadID, NULL, StartUDPServer, NULL);
 
@@ -23,10 +21,27 @@ void UDP_init(void) {
 
 // Cleans up the UDP thread.
 void UDP_cleanup(void) {
-    isRunning = false;
     pthread_join(UDPThreadID, NULL);
     sem_post(&UDPRunBlocker);
 }
+
+static char tempJson[MSG_MAX_LEN];
+
+char* doubleArrayToJson(double* array, int size, char* key){
+
+    memset(tempJson, 0, sizeof(char) * MSG_MAX_LEN);
+
+    char* stringOffset = tempJson;
+    stringOffset+= sprintf(stringOffset, "{\"%s\":[", key);
+
+    for(int i=0; i<size; i++){
+        stringOffset += sprintf(stringOffset, "%f,", array[i]);
+    }
+    stringOffset += sprintf(stringOffset, "]}");
+
+    return tempJson;
+}
+
 
 void* StartUDPServer(){
     // Address
@@ -87,13 +102,12 @@ void* StartUDPServer(){
 
         // empty cmd received, store previous cmd into current cmd
         if(strcmp(cmd[0], "\n") == 0){
-            sprintf(cmd[0], "%s",previousCmd);
+            sprintf(*cmd, "%s",previousCmd);
         }
         else{
             // store current cmd to previous cmd
-            sprintf(previousCmd, "%s\n", cmd[0]);
+            sprintf(previousCmd, "%s", *cmd);
         }
-
         // help
         if(strcmp(cmd[0], "help\n") == 0){
             sprintf(previousCmd, "help\n");
@@ -130,7 +144,20 @@ void* StartUDPServer(){
                     0,
                     (struct sockaddr *) &sinRemote, sin_len);
         }
-        //
+        //get Spectrum
+        else if(strcmp(cmd[0], "getSpectrum\n") == 0){
+            double * spectrum = getSpectrum();
+            int spectrumSize = getSpectrumCount();
+
+            doubleArrayToJson(spectrum, spectrumSize, "value");
+
+            // Transmit a reply:
+            sin_len = sizeof(sinRemote);
+            sendto( socketDescriptor,
+                    tempJson, strlen(tempJson),
+                    0,
+                    (struct sockaddr *) &sinRemote, sin_len);
+        }
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
             // Transmit a reply:
