@@ -354,7 +354,8 @@ void* generateSpectrum(){
     while(isRunning){
 
         pthread_mutex_lock(&lock);
-        //short to double
+        
+        //short to audio double
         for (int i = 0; i < playbackBufferSize; i++){
             fftwIn[i] = playbackBuffer[i] / 32768.0;
         }
@@ -362,9 +363,10 @@ void* generateSpectrum(){
         fftw_execute(fftwPlan);
 
         for(int i=0; i < fftwCount / 2; i++){
-            double re = fftwOut[i][0];
-            double im = fftwOut[i][1];
-            spectrum[i] = sqrt(re * re + im * im);
+            // fftw output is a complex number;
+            double real = fftwOut[i][0];
+            double img = fftwOut[i][1];
+            spectrum[i] = sqrt(real * real + img * img);
         }
 
         for(int i=0;i<fftwCount / 2;i++){
