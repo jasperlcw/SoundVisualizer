@@ -54,5 +54,6 @@ void startSpectrumThread();
 void clearSpectrumThread();
 void* generateSpectrum();
 double* getSpectrum();
+int getSpectrumCount();
 
 #endif

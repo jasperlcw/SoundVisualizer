@@ -33,5 +33,6 @@ void UDP_cleanup(void);
 
 // Initializes the UDP server
 void* StartUDPServer();
+void* emitMessage();
 
 #endif

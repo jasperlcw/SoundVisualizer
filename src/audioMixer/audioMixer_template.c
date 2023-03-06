@@ -347,6 +347,9 @@ void clearSpectrumThread(){
 double* getSpectrum(){
     return spectrum;
 }
+int getSpectrumCount(){
+    return fftwCount / 2;
+}
 
 void* generateSpectrum(){
     //Spectrum range
@@ -354,7 +357,7 @@ void* generateSpectrum(){
     while(isRunning){
 
         pthread_mutex_lock(&lock);
-        
+
         //short to audio double
         for (int i = 0; i < playbackBufferSize; i++){
             fftwIn[i] = playbackBuffer[i] / 32768.0;
