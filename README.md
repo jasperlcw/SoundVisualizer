@@ -1,6 +1,6 @@
 # CMPT 433 Final Project - LED Visualizer
 ## Project Idea (note that the zen cape might be different between members):
-* Baseline idea is to work with LEDs and to control it with hardware buttons and through the local network through UDP
+* Baseline idea is to work with LEDs and to control it with hardware buttons and through the local network through UDP(embedded with react front end)
 * Buttons will be the soldered joystick on the BeagleBone
 * Current light mode will be stored on the EEPROM
 * Change the IP config to have a static IP instead of DHCP on the WiFi dongle
