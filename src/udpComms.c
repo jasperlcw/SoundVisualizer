@@ -1,10 +1,9 @@
 #include "include/udpComms.h"
+#include "audioMixer/audioMixer_template.h"
 
 
-bool isRunning = true;
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
-
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
@@ -12,7 +11,6 @@ char previousCmd[MSG_MAX_LEN];
 
 // Initializes the UDP thread.
 void UDP_init(void) {
-    isRunning = true;
     sem_init(&UDPRunBlocker, 0, 0);
     pthread_create(&UDPThreadID, NULL, StartUDPServer, NULL);
 
@@ -23,13 +21,10 @@ void UDP_init(void) {
 
 // Cleans up the UDP thread.
 void UDP_cleanup(void) {
-    isRunning = false;
     pthread_join(UDPThreadID, NULL);
     sem_post(&UDPRunBlocker);
 }
 
-<<<<<<< Updated upstream
-=======
 static char tempJson[1000];
 
 char* doubleArrayToJson(double* array, int size, char* key){
@@ -51,7 +46,7 @@ char* doubleArrayToJson(double* array, int size, char* key){
 }
 
 
->>>>>>> Stashed changes
+
 void* StartUDPServer(){
     // Address
     struct sockaddr_in sin;
@@ -111,13 +106,12 @@ void* StartUDPServer(){
 
         // empty cmd received, store previous cmd into current cmd
         if(strcmp(cmd[0], "\n") == 0){
-            sprintf(cmd[0], "%s",previousCmd);
+            sprintf(*cmd, "%s",previousCmd);
         }
         else{
             // store current cmd to previous cmd
-            sprintf(previousCmd, "%s\n", cmd[0]);
+            sprintf(previousCmd, "%s", *cmd);
         }
-
         // help
         if(strcmp(cmd[0], "help\n") == 0){
             sprintf(previousCmd, "help\n");
@@ -142,9 +136,6 @@ void* StartUDPServer(){
                 sprintf(messageTx, "invalid choice for time format, only 0 or 1 is available:\n");
             }
         }
-<<<<<<< Updated upstream
-        //
-=======
         //get Spectrum
         else if(strcmp(cmd[0], "getSpectrum\n") == 0){
             double * spectrum = getSpectrum();
@@ -153,7 +144,6 @@ void* StartUDPServer(){
             doubleArrayToJson(spectrum, spectrumSize, "value");
             sprintf(messageTx, "spectrum %s", tempJson);
         }
->>>>>>> Stashed changes
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
             // Transmit a reply:

@@ -17,7 +17,9 @@ const socket = socketIO(server, {
 const bbgPort = 12345
 const webServerPost = 8080
 const udpServer = dgram.createSocket('udp4');
+
 let messageCount = 0;
+
 
 udpServer.on('error', (err) => {
     console.log("UDP Server Error: ");
@@ -26,8 +28,10 @@ udpServer.on('error', (err) => {
 udpServer.on('message', (msg, info) =>{
     console.log(`received: ${msg} from BBG: ${info.address}:${info.port}`);
     socket.emit('message', msg.toString());
+
     messageCount++;
     console.log(`message Count: ${messageCount}`);
+
 })
 
 udpServer.on('listening', () => {
@@ -51,7 +55,6 @@ socket.on('connection', (client) =>{
         )
     });
 })
-
 server.listen(webServerPost, () => {
     console.log(`Web server listening on port ${webServerPost}`)
 })
