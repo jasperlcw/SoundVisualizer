@@ -2,46 +2,75 @@
 import { useEffect, useRef} from 'react';
 import './AudioVisualStyle.css';
 
+// In pixels
 const canvasHeight = 400;
 const canvasWidth = 800;
 
-const barWidth = canvasWidth / 16;
-const barSpacing = 5;
-const maxBarHeight = canvasHeight / 1.5;
+const maxBarHeight = 16;
+const pixelDiameter = canvasHeight / maxBarHeight;
 
+// Initialize our board
+let board = [];
+for (let column = 0; column < 32; column++) {
+    var row_array = [];
+    for (let row = 0; row < 16; row++) {
+        row_array.push({
+            'x': column,
+            'y': row,
+            'active': false,
+            'color': `rgb(${255}, ${0}, ${0})`
+        })
+    }
+    board.push(row_array);
+}
 
 const AudioVisualiser = ({spectrum}) => {
     // draw the Audio Visualiser with bars
 
     const canvasRef = useRef(null);
     useEffect(() =>{
-        const visualData = [];
         const spectrumValues = spectrum.value;
         if(!spectrumValues){
             return;
         }
-        for (let i = 0; i < spectrumValues.length && i < 16; i++) {
-            const barHeight = spectrumValues[i] / 10 * maxBarHeight;
-            const x = i * (barWidth + barSpacing);
-            const y = canvasHeight - barHeight;
 
-            visualData.push({
-                x: x,
-                y: y,
-                width: barWidth,
-                height: barHeight,
-                color: `rgb(${255}, ${0}, ${0})`
-            });
+        for (let i = 0; i < spectrumValues.length && i < 32; i += 2) {
+            const barHeight = Math.floor(spectrumValues[i / 2] / 10 * maxBarHeight);
+            for (let row = 0; row < maxBarHeight; row++) {
+                if(row >= barHeight) {
+                    board[i][row].active = true;
+                    board[i + 1][row].active = true;
+                } else {
+                    board[i][row].active = false;
+                    board[i + 1][row].active = false;
+                }
+            }
         }
+
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = `rgb(${0}, ${0}, ${0})`
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fill();
 
-        visualData.forEach(bar => {
-            ctx.fillStyle = bar.color;
-            ctx.fillRect(bar.x, bar.y, bar.width, bar.height);
-        });
+        for (let column = 0; column < 32; column++) {
+            for (let row = 0; row < 16; row++) {
+                ctx.beginPath();
+                ctx.arc(
+                    (pixelDiameter / 2) + (board[column][row].x * pixelDiameter),
+                    (pixelDiameter / 2) + (board[column][row].y * pixelDiameter),
+                    pixelDiameter / 2,
+                    0,
+                    2 * Math.PI
+                );
+                if(board[column][row].active)
+                    ctx.fillStyle = board[column][row].color;
+                else
+                    ctx.fillStyle = `rgb(${50}, ${50}, ${50})`
+                ctx.fill(); 
+            }
+        }
 
     },[spectrum])
 
@@ -51,4 +80,5 @@ const AudioVisualiser = ({spectrum}) => {
         </div>
     );
 }
+
 export default AudioVisualiser;

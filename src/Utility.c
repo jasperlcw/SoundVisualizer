@@ -1,15 +1,7 @@
 
-
 #include "Utility.h"
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <time.h>
-
 bool isRunning = true;
-
 
 void sleepForMs(long long delayInMs)
 {
@@ -21,7 +13,6 @@ void sleepForMs(long long delayInMs)
     struct timespec reqDelay = {seconds, nanoseconds};
     nanosleep(&reqDelay, (struct timespec *) NULL);
 }
-
 
 void runCommand(char* command)
 {
@@ -70,13 +61,13 @@ void writeI2cReg(int i2cFileDesc, unsigned char regAddr,
 
 char* readI2cReg(int i2cFileDesc, unsigned char regAddr, char* value)
 {
-// To read a register, must first write the address
+    // To read a register, must first write the address
     int res = write(i2cFileDesc, &regAddr, sizeof(regAddr));
     if (res != sizeof(regAddr)) {
         perror("I2C: Unable to write to i2c register.");
         exit(1);
     }
-// Now read the value and return it
+    // Now read the value and return it
     res = read(i2cFileDesc, value, sizeof(value));
     if (res != sizeof(value)) {
         perror("I2C: Unable to read from i2c register");
