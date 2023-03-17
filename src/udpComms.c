@@ -1,13 +1,12 @@
 #include "include/udpComms.h"
 #include "audioMixer/audioMixer_template.h"
-
+#include "include/potentiometer.h"
 
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
-
 
 // Initializes the UDP thread.
 void UDP_init(void) {
@@ -16,7 +15,6 @@ void UDP_init(void) {
 
     sem_wait(&UDPRunBlocker); // Block here until visualizer's shutdown process is complete
     sem_destroy(&UDPRunBlocker);
-
 }
 
 // Cleans up the UDP thread.
@@ -34,7 +32,7 @@ char* doubleArrayToJson(double* array, int size, char* key){
     char* stringOffset = tempJson;
     stringOffset+= sprintf(stringOffset, "{\"%s\":[", key);
 
-    for(int i=0; i<size-1; i++){
+    for(int i = 0; i < size-1; i++){
         stringOffset += sprintf(stringOffset, "%f,", array[i]);
     }
 
@@ -44,8 +42,6 @@ char* doubleArrayToJson(double* array, int size, char* key){
 
     return tempJson;
 }
-
-
 
 void* StartUDPServer(){
     // Address
@@ -87,7 +83,7 @@ void* StartUDPServer(){
         // Make it null terminated (so string functions work)
         // - recvfrom given max size - 1, so there is always room for the null
         messageRx[bytesRx] = 0;
-        printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
+        // printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
 
         // separate the command and store into an array
         char *temp;
@@ -143,6 +139,11 @@ void* StartUDPServer(){
 
             doubleArrayToJson(spectrum, spectrumSize, "value");
             sprintf(messageTx, "spectrum %s", tempJson);
+        }
+        //get Brightness
+        else if(strcmp(cmd[0], "getBrightness\n") == 0){
+            int brightnessPercent = Potentiometer_getReading();
+            sprintf(messageTx, "brightness %d", brightnessPercent);
         }
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");

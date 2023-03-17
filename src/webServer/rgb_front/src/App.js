@@ -4,12 +4,14 @@ import {useEffect, useState} from 'react';
 
 import io from 'socket.io-client';
 import AudioVisualiser from "./component/AudioVisualiser";
+import BrightnessBar from './component/BrightnessBar';
 
 const socket = io('http://192.168.7.2:8080');
 function App() {
 
   const [messages, setMessage] = useState("");
   const [spectrum, setSpectrum] = useState([]);
+  const [brightness, setBrightness] = useState([]);
 
   // set the message state when it received a message from bbg
   useEffect(() => {
@@ -27,6 +29,14 @@ function App() {
     return () => clearInterval(getSpectrumInterval);
   },[])
 
+  //send getBrightness to bbg
+  useEffect(()=>{
+    const getBrightnessInterval = setInterval(()=>{
+      sendMessage("getBrightness\n");
+    }, 100)
+    return () => clearInterval(getBrightnessInterval);
+  },[])
+
   useEffect(()=>{
     setNewCommend();
   },[messages])
@@ -39,6 +49,12 @@ function App() {
       try{
         setSpectrum(JSON.parse(cmd[1]));
       }catch(error){
+        console.log(error);
+      }
+    } else if (cmd[0] === "brightness") {
+      try {
+        setBrightness(cmd[1]);
+      } catch(error) {
         console.log(error);
       }
     }
@@ -61,6 +77,10 @@ function App() {
 
         <div>
           <AudioVisualiser spectrum = {spectrum}/>
+        </div>
+
+        <div>
+          <BrightnessBar brightness = {brightness}/>
         </div>
 
         <button onClick={() => sendMessage("help")}> click me for help!</button>

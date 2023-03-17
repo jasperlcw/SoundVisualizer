@@ -1,6 +1,6 @@
 TARGET = final_project
 
-SOURCES = src/Utility.c src/ledControl.c src/audioMixer/audioMixer_template.c src/audioMixer/BeatController.c src/udpComms.c src/main.c
+SOURCES = src/Utility.c src/ledControl.c src/audioMixer/audioMixer_template.c src/potentiometer.c src/audioMixer/BeatController.c src/udpComms.c src/main.c
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
 LIBDIR = $(HOME)/cmpt433/public

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "include/potentiometer.h"
 
@@ -33,6 +34,7 @@ static int getVoltageReading(char* path)
 // of the way the potentiometer has been turned
 int Potentiometer_getReading()
 {
-    int potReading = getVoltageReading(A2D_FILE_POTENTIOMETER);
-    return potReading / A2D_MAX_READING;
+    double potReading = getVoltageReading(A2D_FILE_POTENTIOMETER);
+    double percentTurned = potReading / A2D_MAX_READING;
+    return percentTurned * 100;
 }
