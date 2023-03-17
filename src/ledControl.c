@@ -412,6 +412,16 @@ void LED_setDisplay(int **matrix)
     }
 }
 
+static void updateClockDisplay(void)
+{
+    // TODO: figure out correct spacing for numbers/display
+    pthread_mutex_lock(&ledScreenMutex);
+    {
+        
+    }
+    pthread_mutex_unlock(&ledScreenMutex);
+}
+
 static void* ledThread(void *vargp)
 {
     printf("Thread for displaying to the LED panel now running.\n");
@@ -420,7 +430,7 @@ static void* ledThread(void *vargp)
             memset(screen, 0, sizeof(screen));
         }
         else if (currentMode == LED_CLOCK) {
-            // TODO: update the screen with the current time
+            updateClockDisplay();
         }
 
         ledMatrix_refresh();
