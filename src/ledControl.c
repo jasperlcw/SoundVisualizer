@@ -5,6 +5,7 @@
 */
 
 #include "include/ledControl.h"
+#include "include/currentTime.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -414,7 +415,13 @@ void LED_setDisplay(int **matrix)
 
 static void updateClockDisplay(void)
 {
-    // TODO: figure out correct spacing for numbers/display
+    int currentHour = CurrentTime_getCurrentHour();
+    int currentMinute = CurrentTime_getCurrentMinute();
+    int hourFirstDigit = currentHour / 10;
+    int hourSecondDigit = currentHour % 10;
+    int minuteFirstDigit = currentMinute / 10;
+    int minuteSecondDigit = currentMinute % 10;
+    // TODO: implement a map of digit to LED matrix
     pthread_mutex_lock(&ledScreenMutex);
     {
         
