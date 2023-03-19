@@ -6,6 +6,7 @@
 
 #include "include/ledControl.h"
 #include "include/currentTime.h"
+#include "include/ledMap.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,6 +39,10 @@
 #define DELAY_IN_US 5
 #define DELAY_IN_SEC 0
 
+// Number Pixel Size
+#define NUMBER_SIZE_HORIZONTAL 5
+#define NUMBER_SIZE_VERTICAL 7
+
 /* LED Screen Values */
 static int screen[32][16];
 
@@ -62,6 +67,9 @@ static bool isRunning;
 
 // Function for the thread to continuously refresh the LED panel.
 static void* ledThread(void *vargp);
+
+// Static helper functions
+static void updateClockDisplay(void);
 
 // Taken from page 7 of assignment 1 description
 static void sleepForMs(long long delayInMs)
@@ -210,7 +218,6 @@ static void ledMatrix_latch(void)
 
     return;
 }
-
 
 /**
  *  ledMatrix_bitsFromInt
@@ -415,18 +422,61 @@ void LED_setDisplay(int **matrix)
 
 static void updateClockDisplay(void)
 {
+    /*
+    *   Notes: 
+    *   first number starts at screen[4][3]
+    *   second number starts at screen[4][9]
+    *   third number starts at screen[4][17]
+    *   fourth number starts at screen[4][23]
+    */
+
     int currentHour = CurrentTime_getCurrentHour();
     int currentMinute = CurrentTime_getCurrentMinute();
+
     int hourFirstDigit = currentHour / 10;
     int hourSecondDigit = currentHour % 10;
     int minuteFirstDigit = currentMinute / 10;
     int minuteSecondDigit = currentMinute % 10;
-    // TODO: implement a map of digit to LED matrix
+
+    int **firstDigitMatrix = LEDMap_getNumberDisplay(hourFirstDigit);
+    int **secondDigitMatrix = LEDMap_getNumberDisplay(hourSecondDigit);
+    int **thirdDigitMatrix = LEDMap_getNumberDisplay(minuteFirstDigit);
+    int **fourthDigitMatrix = LEDMap_getNumberDisplay(minuteSecondDigit);
+
+    const int colStartPositions[4] = {3, 9, 17, 23};
+
     pthread_mutex_lock(&ledScreenMutex);
     {
+        for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
+            for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
+                screen[4 + rowPos][colStartPositions[0] + colPos] = firstDigitMatrix[rowPos][colPos]; 
+            }
+        }
+
+        for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
+            for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
+                screen[4 + rowPos][colStartPositions[1] + colPos] = secondDigitMatrix[rowPos][colPos]; 
+            }
+        }
+
+        for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
+            for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
+                screen[4 + rowPos][colStartPositions[2] + colPos] = thirdDigitMatrix[rowPos][colPos]; 
+            }
+        }
         
+        for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
+            for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
+                screen[4 + rowPos][colStartPositions[3] + colPos] = fourthDigitMatrix[rowPos][colPos]; 
+            }
+        }
     }
     pthread_mutex_unlock(&ledScreenMutex);
+
+    LEDMap_freeDisplayArray(firstDigitMatrix);
+    LEDMap_freeDisplayArray(secondDigitMatrix);
+    LEDMap_freeDisplayArray(thirdDigitMatrix);
+    LEDMap_freeDisplayArray(fourthDigitMatrix);
 }
 
 static void* ledThread(void *vargp)
