@@ -447,29 +447,37 @@ static void updateClockDisplay(void)
 
     pthread_mutex_lock(&ledScreenMutex);
     {
+        // Display first digit
         for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
             for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
                 screen[4 + rowPos][colStartPositions[0] + colPos] = firstDigitMatrix[rowPos][colPos]; 
             }
         }
 
+        // Display second digit
         for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
             for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
                 screen[4 + rowPos][colStartPositions[1] + colPos] = secondDigitMatrix[rowPos][colPos]; 
             }
         }
 
+        // Display third digit
         for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
             for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
                 screen[4 + rowPos][colStartPositions[2] + colPos] = thirdDigitMatrix[rowPos][colPos]; 
             }
         }
-        
+
+        // Display fourth digit
         for (int rowPos = 0; rowPos < NUMBER_SIZE_VERTICAL; rowPos++) {
             for (int colPos = 0; colPos < NUMBER_SIZE_HORIZONTAL; colPos++){
                 screen[4 + rowPos][colStartPositions[3] + colPos] = fourthDigitMatrix[rowPos][colPos]; 
             }
         }
+
+        // Display colon
+        screen[6][15] = 7;
+        screen[8][15] = 7;
     }
     pthread_mutex_unlock(&ledScreenMutex);
 
