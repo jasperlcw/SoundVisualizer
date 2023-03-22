@@ -1,13 +1,12 @@
 #include "include/udpComms.h"
 #include "audioMixer/audioMixer_template.h"
-
+#include "include/potentiometer.h"
 
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
-
 
 // Initializes the UDP thread.
 void UDP_init(void) {
@@ -16,7 +15,6 @@ void UDP_init(void) {
 
     sem_wait(&UDPRunBlocker); // Block here until visualizer's shutdown process is complete
     sem_destroy(&UDPRunBlocker);
-
 }
 
 // Cleans up the UDP thread.
@@ -25,23 +23,25 @@ void UDP_cleanup(void) {
     sem_post(&UDPRunBlocker);
 }
 
-static char tempJson[MSG_MAX_LEN];
+static char tempJson[1000];
 
 char* doubleArrayToJson(double* array, int size, char* key){
 
-    memset(tempJson, 0, sizeof(char) * MSG_MAX_LEN);
+    memset(tempJson, 0, sizeof(char) * 1000);
 
     char* stringOffset = tempJson;
     stringOffset+= sprintf(stringOffset, "{\"%s\":[", key);
 
-    for(int i=0; i<size; i++){
+    for(int i = 0; i < size-1; i++){
         stringOffset += sprintf(stringOffset, "%f,", array[i]);
     }
+
+    stringOffset += sprintf(stringOffset, "%f", array[size-1]);
+
     stringOffset += sprintf(stringOffset, "]}");
 
     return tempJson;
 }
-
 
 void* StartUDPServer(){
     // Address
@@ -83,7 +83,7 @@ void* StartUDPServer(){
         // Make it null terminated (so string functions work)
         // - recvfrom given max size - 1, so there is always room for the null
         messageRx[bytesRx] = 0;
-        printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
+        // printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
 
         // separate the command and store into an array
         char *temp;
@@ -113,12 +113,6 @@ void* StartUDPServer(){
             sprintf(previousCmd, "help\n");
             sprintf(messageTx, "Accepted command examples:\n"
                                "timeFormat 0 -- (0) AM/PM clock (1) 24h clock.\n");
-
-            sin_len = sizeof(sinRemote);
-            sendto( socketDescriptor,
-                    messageTx, strlen(messageTx),
-                    0,
-                    (struct sockaddr *) &sinRemote, sin_len);
         }
         //time
         else if(strcmp(cmd[0], "timeFormat") == 0){
@@ -137,12 +131,6 @@ void* StartUDPServer(){
             else{
                 sprintf(messageTx, "invalid choice for time format, only 0 or 1 is available:\n");
             }
-            // Transmit a reply:
-            sin_len = sizeof(sinRemote);
-            sendto( socketDescriptor,
-                    messageTx, strlen(messageTx),
-                    0,
-                    (struct sockaddr *) &sinRemote, sin_len);
         }
         //get Spectrum
         else if(strcmp(cmd[0], "getSpectrum\n") == 0){
@@ -150,23 +138,22 @@ void* StartUDPServer(){
             int spectrumSize = getSpectrumCount();
 
             doubleArrayToJson(spectrum, spectrumSize, "value");
-
-            // Transmit a reply:
-            sin_len = sizeof(sinRemote);
-            sendto( socketDescriptor,
-                    tempJson, strlen(tempJson),
-                    0,
-                    (struct sockaddr *) &sinRemote, sin_len);
+            sprintf(messageTx, "spectrum %s", tempJson);
+        }
+        //get Brightness
+        else if(strcmp(cmd[0], "getBrightness\n") == 0){
+            int brightnessPercent = Potentiometer_getReading();
+            sprintf(messageTx, "brightness %d", brightnessPercent);
         }
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
             // Transmit a reply:
-            sin_len = sizeof(sinRemote);
-            sendto( socketDescriptor,
-                    messageTx, strlen(messageTx),
-                    0,
-                    (struct sockaddr *) &sinRemote, sin_len);
         }
+        sin_len = sizeof(sinRemote);
+        sendto( socketDescriptor,
+                messageTx, strlen(messageTx),
+                0,
+                (struct sockaddr *) &sinRemote, sin_len);
     }
     // Close
     close(socketDescriptor);

@@ -40,7 +40,6 @@ static void* visualizerThread(void *vargp)
     {
         JS_Direction jsDirection = Joystick_getJoystickInput();
 
-
         switch (jsDirection)
         {
             case UP:
@@ -59,7 +58,5 @@ static void* visualizerThread(void *vargp)
                 // shuts down the program
                 break;
         }
-
-        
     }
 }

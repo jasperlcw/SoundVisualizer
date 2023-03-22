@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "BeatController.h"
 
-
 int beatSetting;
 static int bpm;
 
@@ -15,8 +14,8 @@ void startBeatController(){
 void clearBeatController(){
     pthread_join(beating, NULL);
 }
-void* startBeat(){
 
+void* startBeat(){
     runCommand("config-pin p9_18 i2c");
     runCommand("config-pin p9_17 i2c");
 
@@ -24,26 +23,25 @@ void* startBeat(){
     wavedata_t testFile;
     AudioMixer_readWaveFileIntoMemory(FREQ_TESTER, &testFile);
 
-    wavedata_t drum_bd_hard;
-    AudioMixer_readWaveFileIntoMemory(DRUM_BD_HARD, &drum_bd_hard);
+    // wavedata_t drum_bd_hard;
+    // AudioMixer_readWaveFileIntoMemory(DRUM_BD_HARD, &drum_bd_hard);
 
-    wavedata_t drum_cc;
-    AudioMixer_readWaveFileIntoMemory(DRUM_CC, &drum_cc);
+    // wavedata_t drum_cc;
+    // AudioMixer_readWaveFileIntoMemory(DRUM_CC, &drum_cc);
 
-    wavedata_t drum_snare_soft;
-    AudioMixer_readWaveFileIntoMemory(DRUM_SNARE_SOFT, &drum_snare_soft);
+    // wavedata_t drum_snare_soft;
+    // AudioMixer_readWaveFileIntoMemory(DRUM_SNARE_SOFT, &drum_snare_soft);
 
     presetSound[0] = testFile;
-    presetSound[1] = drum_bd_hard;
-    presetSound[2] = drum_cc;
-    presetSound[3] = drum_snare_soft;
-
+    // presetSound[1] = drum_bd_hard;
+    // presetSound[2] = drum_cc;
+    // presetSound[3] = drum_snare_soft;
 
     while (isRunning) {
         playASound(0);
         sleepForMs(10000);
-
     }
+
     return NULL;
 }
 
@@ -77,6 +75,7 @@ int getBPMms(double beat){
     double min = 60.0;
     return (int)(min / ((double)bpm) * 1000 * beat);
 }
+
 void switchBeatSetting(){
     beatSetting += 1;
     if(beatSetting >= MAX_BEAT_SET){
@@ -84,14 +83,15 @@ void switchBeatSetting(){
     }
     printf("current beat: %d \n", beatSetting);
 }
+
 bool setBeatSetting(int setting){
     if (setting >=0 && setting < MAX_BEAT_SET){
         beatSetting = setting;
         return true;
     }
     return false;
-
 }
+
 int getBeatSetting(){
     return beatSetting;
 }

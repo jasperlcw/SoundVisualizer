@@ -16,9 +16,9 @@ extern wavedata_t presetSound[MAX_SOUND_SET];
 
 #define TEST "final-wav-files/test.wav"
 #define FREQ_TESTER "final-wav-files/freqTester_old.wav"
-#define DRUM_BD_HARD "beatbox-wav-file/100051__menegass__gui-drum-bd-hard.wav"
-#define DRUM_CC "beatbox-wav-file/100053__menegass__gui-drum-cc.wav"
-#define DRUM_SNARE_SOFT "beatbox-wav-file/100059__menegass__gui-drum-snare-soft.wav"
+#define DRUM_BD_HARD "wave-files/100051__menegass__gui-drum-bd-hard.wav"
+#define DRUM_CC "wave-files/100053__menegass__gui-drum-cc.wav"
+#define DRUM_SNARE_SOFT "wave-files/100059__menegass__gui-drum-snare-soft.wav"
 
 //thread
 void startBeatController();

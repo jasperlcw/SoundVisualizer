@@ -9,7 +9,7 @@
 #include <alloca.h> // needed for mixer
 #include <math.h>
 
-//#include "../lib/fftw-3.3.10/api/fftw3.h"
+// #include "../lib/fftw-3.5.8/api/fftw3.h"
 #include <fftw3.h>
 #include <stdio.h>
 
@@ -330,7 +330,7 @@ void startSpectrumThread(){
     //init fftw plans
     // "fftwCount / 2" will be the number of output for the Spectrum
 
-    fftwCount = 20;
+    fftwCount = 32;
     fftwIn = (double*) fftw_malloc(sizeof (double) * playbackBufferSize);
     fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) *playbackBufferSize);
     fftwPlan = fftw_plan_dft_r2c_1d(fftwCount, fftwIn, fftwOut, FFTW_ESTIMATE);
@@ -340,13 +340,14 @@ void startSpectrumThread(){
 }
 
 void clearSpectrumThread(){
-
     pthread_join(spectrumThread, NULL);
     fftw_destroy_plan(fftwPlan);
 }
+
 double* getSpectrum(){
     return spectrum;
 }
+
 int getSpectrumCount(){
     return fftwCount / 2;
 }
@@ -355,7 +356,6 @@ void* generateSpectrum(){
     //Spectrum range
     //example: https://nanohub.org/resources/16909/download/2013.02.08-ECE595E-L13.pdf
     while(isRunning){
-
         pthread_mutex_lock(&lock);
 
         //short to audio double
@@ -365,36 +365,19 @@ void* generateSpectrum(){
         pthread_mutex_unlock(&lock);
         fftw_execute(fftwPlan);
 
-        for(int i=0; i < fftwCount / 2; i++){
+        for(int i = 0; i < fftwCount / 2; i++){
             // fftw output is a complex number;
             double real = fftwOut[i][0];
             double img = fftwOut[i][1];
             spectrum[i] = sqrt(real * real + img * img);
         }
 
-        for(int i=0;i<fftwCount / 2;i++){
+        for(int i = 0; i < fftwCount / 2; i++){
             printf("%d: %0.0f ", i, spectrum[i] * 1000);
         }
+
         printf("\n");
-        sleepForMs(1000);
+        sleepForMs(100);
     }
     return NULL;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
