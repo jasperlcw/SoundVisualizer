@@ -6,16 +6,37 @@
 #ifndef _LED_H_
 #define _LED_H_
 
-// Initializes the I2C registers for displaying to the LED.
+#define LED_BLACK   0
+#define LED_RED     1
+#define LED_GREEN   2
+#define LED_YELLOW  3
+#define LED_BLUE    4
+#define LED_MAGENTA 5
+#define LED_TEAL    6
+#define LED_WHITE   7
+
+typedef enum LED_Mode {
+    LED_OFF,
+    LED_CLOCK,
+    LED_LISTEN
+} LED_Mode;
+
+// Initializes the I2C registers for displaying to the LED and starts
+// with the mode being to display a 24-hour clock.
 void LED_init(void);
 
 // Cleans up the I2C registers for displaying to the LED.
 void LED_cleanup(void);
 
-// TODO: figure out a way to give this module data that it can easily convert to display
-// on an LED panel. Maybe a 2D matrix of hex values?
+// Halts a current thread until the module is stopped through LED_cleanup
+void LED_wait(void);
 
-// something along the lines of 
-// void LED_display(2D matrix of hex);
+// Sets the mode of the LED panel for what to display.
+void LED_setMode(LED_Mode mode);
+
+// Changes the colors displayed by the LED panel, where the passed in matrix
+// should be a size of 16x32 containing values of the defined constants in this module.
+// Note that the program will ignore inputs if the mode is set to CLOCK.
+void LED_setDisplay(int **matrix);
 
 #endif
