@@ -4,15 +4,17 @@ import axios from 'axios';
 const WaveFileUpload = () => {
 
     const [waveFile, setWaveFile] = useState(null);
-    const [uploadComplete, setUploadComplete] = useState(false)
+    const [uploadComplete, setUploadComplete] = useState(false);
+    const [uploadText, setUploadText] = useState("upload a file");
 
     const handleFileChange = (event) =>{
+        setUploadText("upload a file");
         setWaveFile(event.target.files[0]);
     }
 
     const sendWaveFile = () =>{
         if(!waveFile) return;
-        console.log("uploading")
+        setUploadText("uploading");
         const reader = new FileReader();
         reader.onload = () =>{
             const contents = reader.result;
@@ -25,7 +27,7 @@ const WaveFileUpload = () => {
             axios.post(target, data, {headers})
                 .then(res => {
                     console.log(res);
-                    setUploadComplete(true);
+                    setUploadText("uploaded");
                 })
                 .catch(err => console.log(err));
 
@@ -37,8 +39,7 @@ const WaveFileUpload = () => {
         <div>
             <input type="file" onChange={handleFileChange} accept='audio/wav'/>
             <button onClick={sendWaveFile}>Upload</button>
-            {uploadComplete ? <span>{"uploadComplete!"}</span> : <span style={{marginLeft: "3px"}}>upload a file</span>}
-
+            <span style={{marginLeft: "1%"}}>{uploadText}</span>
         </div>
     )
 }

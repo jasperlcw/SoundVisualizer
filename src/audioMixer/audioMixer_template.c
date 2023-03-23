@@ -329,15 +329,13 @@ void* playbackThread(void* arg)
 
 //spectrum output is 32
 int numOfSampleFreq = 32;
-int minFreq = 0;
+
 
 void startSpectrumThread(){
     //init fftw plans
 
-    //start from minFreq
-    minFreq = 0;
     // build Spectrum with 512 levels of freq
-    fftwCount = 512;
+    fftwCount = 1024;
 
     fftwIn = (double*) fftw_malloc(sizeof (double) * playbackBufferSize);
     fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) *playbackBufferSize);
@@ -360,8 +358,10 @@ int getSpectrumCount(){
     return numOfSampleFreq;
 }
 
+
 void* generateSpectrum(){
     //Spectrum range
+    // spectrum will capt
     //example: https://nanohub.org/resources/16909/download/2013.02.08-ECE595E-L13.pdf
 
     while(isRunning){
@@ -374,14 +374,46 @@ void* generateSpectrum(){
         pthread_mutex_unlock(&lock);
         fftw_execute(fftwPlan);
 
-        for(int i = 0; i < numOfSampleFreq; i++){
-            // fftw output is a complex number;
-            double real = fftwOut[i+minFreq][0];
-            double img = fftwOut[i+minFreq][1];
-            spectrum[i] = sqrt(real * real + img * img);
-        }
+        // most of the high frequency of the spectrum is useless
+        // add a bias can smooth out the spectrum
+        // it will capture more samples of high frequency and avg them
+        double currentAddFactor = 0;
+        int currentTotal = 0;
+        int bias = 0;
+        int biasStart = 24;
 
-//        for(int i = 0; i < fftwCount / 2; i++){
+        for(int i = 0; i < numOfSampleFreq; i++){
+
+            double currentSum = 0;
+            for (int j = 0; j <= currentAddFactor; j++){
+
+                // fftw output is a complex number;
+                double real = fftwOut[currentTotal][0];
+                double img = fftwOut[currentTotal][1];
+                double currentValue = sqrt(real * real + img * img);
+
+                if(isnan(currentValue))                          currentValue = 0;  //nan
+                if(isnan(currentValue) && signbit(currentValue)) currentValue = 0;  //-nan
+                if(isinf(currentValue))                          currentValue = 0;  //inf
+                if(isinf(currentValue) && signbit(currentValue)) currentValue = 0;  //-inf
+
+                currentSum += currentValue;
+                //sum
+                currentTotal++;
+                bias++;
+            }
+            //avg
+            spectrum[i] = (currentSum / (currentAddFactor+1));
+
+            //bias to capture more high freq
+            if(bias > biasStart){
+                currentAddFactor+=5;
+            }
+
+        }
+//        printf("total %d: add factor %f \n", currentTotal, currentAddFactor);
+
+//        for(int i = 0; i < numOfSampleFreq; i++){
 //            printf("%d: %0.0f ", i, spectrum[i] * 1000);
 //        }
 //        printf("\n");
