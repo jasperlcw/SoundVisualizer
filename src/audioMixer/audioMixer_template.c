@@ -326,19 +326,15 @@ void* playbackThread(void* arg)
 }
 
 // Spectrum
-
-//spectrum output is 32
 int numOfSampleFreq = 32;
 int minFreq = 0;
 
 void startSpectrumThread(){
     //init fftw plans
+    // "fftwCount / 2" will be the number of output for the Spectrum
+    minFreq = 2;
 
-    //start from minFreq
-    minFreq = 0;
-    // build Spectrum with 512 levels of freq
-    fftwCount = 512;
-
+    fftwCount = 256;
     fftwIn = (double*) fftw_malloc(sizeof (double) * playbackBufferSize);
     fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) *playbackBufferSize);
     fftwPlan = fftw_plan_dft_r2c_1d(fftwCount, fftwIn, fftwOut, FFTW_ESTIMATE);
@@ -357,7 +353,7 @@ double* getSpectrum(){
 }
 
 int getSpectrumCount(){
-    return numOfSampleFreq;
+    return fftwCount / 2;
 }
 
 void* generateSpectrum(){
