@@ -1,3 +1,9 @@
+/*  ledMap.h
+*
+*   Module to provide utility for converting numbers to a matrix
+*   representation for the Adafruit LED board.
+*/
+
 #ifndef _LEDMAP_H_
 #define _LEDMAP_H_
 

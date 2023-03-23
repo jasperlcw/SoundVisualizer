@@ -117,7 +117,7 @@ static int LED_numBlank[NUM_ROW][NUM_COL] = {
     { 0, 0, 0, 0, 0 }
 };
 
-int** LED_getNumberDisplay(const int number)
+int** LEDMap_getNumberDisplay(const int number)
 {
     int **toReturn = malloc(NUM_ROW * sizeof(int*));
     for (int i = 0; i < NUM_ROW; i++) {
