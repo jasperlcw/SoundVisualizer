@@ -27,7 +27,7 @@ function App() {
   useEffect(()=>{
     const getSpectrumInterval = setInterval(()=>{
       sendMessage("getSpectrum\n");
-    }, 100)
+    }, 1000)
     return () => clearInterval(getSpectrumInterval);
   },[])
 
