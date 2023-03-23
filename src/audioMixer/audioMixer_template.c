@@ -372,11 +372,10 @@ void* generateSpectrum(){
             spectrum[i] = sqrt(real * real + img * img);
         }
 
-        for(int i = 0; i < fftwCount / 2; i++){
-            printf("%d: %0.0f ", i, spectrum[i] * 1000);
-        }
-
-        printf("\n");
+//        for(int i = 0; i < fftwCount / 2; i++){
+//            printf("%d: %0.0f ", i, spectrum[i] * 1000);
+//        }
+//        printf("\n");
         sleepForMs(100);
     }
     return NULL;

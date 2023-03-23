@@ -5,6 +5,8 @@ import {useEffect, useState} from 'react';
 import io from 'socket.io-client';
 import AudioVisualiser from "./component/AudioVisualiser";
 import BrightnessBar from './component/BrightnessBar';
+import WaveFileUpload from './component/WaveFileUpload'
+
 
 const socket = io('http://192.168.7.2:8080');
 function App() {
@@ -21,21 +23,21 @@ function App() {
     })
   },[])
 
-  //send getSpectrum to bbg
-  useEffect(()=>{
-    const getSpectrumInterval = setInterval(()=>{
-      sendMessage("getSpectrum\n");
-    }, 100)
-    return () => clearInterval(getSpectrumInterval);
-  },[])
-
-  //send getBrightness to bbg
-  useEffect(()=>{
-    const getBrightnessInterval = setInterval(()=>{
-      sendMessage("getBrightness\n");
-    }, 100)
-    return () => clearInterval(getBrightnessInterval);
-  },[])
+  // //send getSpectrum to bbg
+  // useEffect(()=>{
+  //   const getSpectrumInterval = setInterval(()=>{
+  //     sendMessage("getSpectrum\n");
+  //   }, 100)
+  //   return () => clearInterval(getSpectrumInterval);
+  // },[])
+  //
+  // //send getBrightness to bbg
+  // useEffect(()=>{
+  //   const getBrightnessInterval = setInterval(()=>{
+  //     sendMessage("getBrightness\n");
+  //   }, 100)
+  //   return () => clearInterval(getBrightnessInterval);
+  // },[])
 
   useEffect(()=>{
     setNewCommend();
@@ -81,6 +83,9 @@ function App() {
 
         <div>
           <BrightnessBar brightness = {brightness}/>
+        </div>
+        <div>
+          <WaveFileUpload />
         </div>
 
         <button onClick={() => sendMessage("help")}> click me for help!</button>
