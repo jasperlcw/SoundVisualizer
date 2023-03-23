@@ -435,6 +435,11 @@ void LED_setDisplay(int **matrix)
     }
 }
 
+void LED_clearDisplay(void)
+{
+    memset(screen, 0, sizeof(screen));
+}
+
 static void updateClockDisplay(void)
 {
     /*

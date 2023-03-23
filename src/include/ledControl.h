@@ -39,4 +39,7 @@ void LED_setMode(LED_Mode mode);
 // Note that the program will ignore inputs if the mode is set to CLOCK.
 void LED_setDisplay(int **matrix);
 
+// Clears the LED matrix (makes it all show black)
+void LED_clearDisplay(void);
+
 #endif
