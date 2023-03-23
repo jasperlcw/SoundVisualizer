@@ -437,7 +437,11 @@ void LED_setDisplay(int **matrix)
 
 void LED_clearDisplay(void)
 {
-    memset(screen, 0, sizeof(screen));
+    pthread_mutex_lock(&ledScreenMutex);
+    {
+        memset(screen, 0, sizeof(screen));
+    }
+    pthread_mutex_unlock(&ledScreenMutex);
 }
 
 static void updateClockDisplay(void)
