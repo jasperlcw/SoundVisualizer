@@ -37,7 +37,7 @@ void LED_setMode(LED_Mode mode);
 // Changes the colors displayed by the LED panel, where the passed in matrix
 // should be a size of 16x32 containing values of the defined constants in this module.
 // Note that the program will ignore inputs if the mode is set to CLOCK.
-void LED_setDisplay(int **matrix);
+void LED_setDisplay(const int row, const int col, const int matrix[row][col]);
 
 // Clears the LED matrix (makes it all show black)
 void LED_clearDisplay(void);

@@ -420,14 +420,14 @@ void LED_setMode(LED_Mode mode)
     currentMode = mode;
 }
 
-void LED_setDisplay(int **matrix)
+void LED_setDisplay(const int row, const int col, const int matrix[row][col])
 {
     if (currentMode == LED_LISTEN) {
         pthread_mutex_lock(&ledScreenMutex);
         {
-            for (int row = 0; row < 16; row++) {
-                for (int col = 0; col < 32; col++) {
-                    ledMatrix_setPixel(row, col, matrix[row][col]);
+            for (int rowNum = 0; rowNum < 16; rowNum++) {
+                for (int colNum = 0; colNum < 32; colNum++) {
+                    ledMatrix_setPixel(rowNum, colNum, matrix[rowNum][colNum]);
                 }
             }
         }
