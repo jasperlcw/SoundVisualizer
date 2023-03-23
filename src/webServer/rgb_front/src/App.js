@@ -35,7 +35,7 @@ function App() {
   useEffect(()=>{
     const getBrightnessInterval = setInterval(()=>{
       sendMessage("getBrightness\n");
-    }, 100)
+    }, 1000)
     return () => clearInterval(getBrightnessInterval);
   },[])
 
