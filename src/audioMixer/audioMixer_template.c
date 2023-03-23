@@ -326,16 +326,20 @@ void* playbackThread(void* arg)
 }
 
 // Spectrum
+int numOfSampleFreq = 32;
+int minFreq = 0;
+
 void startSpectrumThread(){
     //init fftw plans
     // "fftwCount / 2" will be the number of output for the Spectrum
+    minFreq = 2;
 
-    fftwCount = 32;
+    fftwCount = 256;
     fftwIn = (double*) fftw_malloc(sizeof (double) * playbackBufferSize);
     fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) *playbackBufferSize);
     fftwPlan = fftw_plan_dft_r2c_1d(fftwCount, fftwIn, fftwOut, FFTW_ESTIMATE);
 
-    spectrum = malloc(sizeof(double) * (fftwCount/2));
+    spectrum = malloc(sizeof(double) * numOfSampleFreq);
     pthread_create(&spectrumThread, NULL, &generateSpectrum, NULL);
 }
 
@@ -355,6 +359,7 @@ int getSpectrumCount(){
 void* generateSpectrum(){
     //Spectrum range
     //example: https://nanohub.org/resources/16909/download/2013.02.08-ECE595E-L13.pdf
+
     while(isRunning){
         pthread_mutex_lock(&lock);
 
@@ -365,10 +370,10 @@ void* generateSpectrum(){
         pthread_mutex_unlock(&lock);
         fftw_execute(fftwPlan);
 
-        for(int i = 0; i < fftwCount / 2; i++){
+        for(int i = 0; i < numOfSampleFreq; i++){
             // fftw output is a complex number;
-            double real = fftwOut[i][0];
-            double img = fftwOut[i][1];
+            double real = fftwOut[i+minFreq][0];
+            double img = fftwOut[i+minFreq][1];
             spectrum[i] = sqrt(real * real + img * img);
         }
 

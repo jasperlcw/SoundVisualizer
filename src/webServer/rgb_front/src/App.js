@@ -23,21 +23,21 @@ function App() {
     })
   },[])
 
-  // //send getSpectrum to bbg
-  // useEffect(()=>{
-  //   const getSpectrumInterval = setInterval(()=>{
-  //     sendMessage("getSpectrum\n");
-  //   }, 100)
-  //   return () => clearInterval(getSpectrumInterval);
-  // },[])
-  //
-  // //send getBrightness to bbg
-  // useEffect(()=>{
-  //   const getBrightnessInterval = setInterval(()=>{
-  //     sendMessage("getBrightness\n");
-  //   }, 100)
-  //   return () => clearInterval(getBrightnessInterval);
-  // },[])
+  //send getSpectrum to bbg
+  useEffect(()=>{
+    const getSpectrumInterval = setInterval(()=>{
+      sendMessage("getSpectrum\n");
+    }, 100)
+    return () => clearInterval(getSpectrumInterval);
+  },[])
+
+  //send getBrightness to bbg
+  useEffect(()=>{
+    const getBrightnessInterval = setInterval(()=>{
+      sendMessage("getBrightness\n");
+    }, 100)
+    return () => clearInterval(getBrightnessInterval);
+  },[])
 
   useEffect(()=>{
     setNewCommend();
@@ -75,7 +75,7 @@ function App() {
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
 
         <h1>UDP Messages</h1>
-        <p>{messages}</p>
+        {/*<p style={{display: "inline", margin: 0, padding: 0 }}>{messages}</p>*/}
 
         <div>
           <AudioVisualiser spectrum = {spectrum}/>

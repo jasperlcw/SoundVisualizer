@@ -4,6 +4,7 @@ import axios from 'axios';
 const WaveFileUpload = () => {
 
     const [waveFile, setWaveFile] = useState(null);
+    const [uploadComplete, setUploadComplete] = useState(false)
 
     const handleFileChange = (event) =>{
         setWaveFile(event.target.files[0]);
@@ -22,7 +23,10 @@ const WaveFileUpload = () => {
             //create buffer
             const data = new Uint8Array(contents)
             axios.post(target, data, {headers})
-                .then(res => console.log(res))
+                .then(res => {
+                    console.log(res);
+                    setUploadComplete(true);
+                })
                 .catch(err => console.log(err));
 
         }
@@ -32,8 +36,9 @@ const WaveFileUpload = () => {
     return (
         <div>
             <input type="file" onChange={handleFileChange} accept='audio/wav'/>
-            {/*{waveFile ? <p>File: {waveFile.name}</p> : <p>upload a file</p>}*/}
             <button onClick={sendWaveFile}>Upload</button>
+            {uploadComplete ? <span>{"uploadComplete!"}</span> : <span style={{marginLeft: "3px"}}>upload a file</span>}
+
         </div>
     )
 }

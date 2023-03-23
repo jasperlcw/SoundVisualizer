@@ -84,7 +84,7 @@ void* StartUDPServer(){
         // Make it null terminated (so string functions work)
         // - recvfrom given max size - 1, so there is always room for the null
         messageRx[bytesRx] = 0;
-         printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
+//         printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
 
         // separate the command and store into an array
         char *temp;
@@ -149,7 +149,6 @@ void* StartUDPServer(){
         // set new Music
 
         else if(strcmp(cmd[0], "setMusic") == 0){
-            printf("%s", cmd[1]);
             sprintf(messageTx, "200");
             initialUploadWave();
         }
