@@ -1,6 +1,7 @@
 #include "include/udpComms.h"
 #include "audioMixer/audioMixer_template.h"
 #include "include/potentiometer.h"
+#include "audioMixer/BeatController.h"
 
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
@@ -83,7 +84,7 @@ void* StartUDPServer(){
         // Make it null terminated (so string functions work)
         // - recvfrom given max size - 1, so there is always room for the null
         messageRx[bytesRx] = 0;
-        // printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
+//         printf("Message received (%d bytes): %s\n", bytesRx, messageRx);
 
         // separate the command and store into an array
         char *temp;
@@ -115,7 +116,7 @@ void* StartUDPServer(){
                                "timeFormat 0 -- (0) AM/PM clock (1) 24h clock.\n");
         }
         //time
-        else if(strcmp(cmd[0], "timeFormat") == 0){
+        else if(strcmp(cmd[0], "timeFormat\n") == 0){
             int choice = atoi(cmd[1]);
             if(choice == 0){
 
@@ -145,10 +146,18 @@ void* StartUDPServer(){
             int brightnessPercent = Potentiometer_getReading();
             sprintf(messageTx, "brightness %d", brightnessPercent);
         }
+        // set new Music
+
+        else if(strcmp(cmd[0], "setMusic") == 0){
+            sprintf(messageTx, "200");
+            initialUploadWave();
+        }
+
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
             // Transmit a reply:
         }
+//        printf("%s", cmd[0]);
         sin_len = sizeof(sinRemote);
         sendto( socketDescriptor,
                 messageTx, strlen(messageTx),

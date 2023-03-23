@@ -34,16 +34,18 @@ const AudioVisualiser = ({spectrum}) => {
             return;
         }
 
-        for (let i = 0; i < spectrumValues.length && i < 32; i += 2) {
-            const barHeight = Math.floor(spectrumValues[i / 2] / 10 * maxBarHeight);
-            for (let row = 0; row < maxBarHeight; row++) {
-                if(row >= barHeight) {
+        for (let i = 0; i < spectrumValues.length && i < 32; i ++) {
+            const barHeight = Math.floor(spectrumValues[i] / 10 * maxBarHeight);
+            let currentIndex = 0;
+            for (let row = maxBarHeight-1; row >= 0; row--) {
+                if(currentIndex < barHeight) {
                     board[i][row].active = true;
-                    board[i + 1][row].active = true;
+                    // board[i + 1][row].active = true;
                 } else {
                     board[i][row].active = false;
-                    board[i + 1][row].active = false;
+                    // board[i + 1][row].active = false;
                 }
+                currentIndex++;
             }
         }
 
@@ -65,9 +67,9 @@ const AudioVisualiser = ({spectrum}) => {
                     2 * Math.PI
                 );
                 if(board[column][row].active)
-                    ctx.fillStyle = board[column][row].color;
+                    ctx.fillStyle = board[column][row].color
                 else
-                    ctx.fillStyle = `rgb(${50}, ${50}, ${50})`
+                    ctx.fillStyle = `rgb(${50}, ${50}, ${50})`;
                 ctx.fill(); 
             }
         }

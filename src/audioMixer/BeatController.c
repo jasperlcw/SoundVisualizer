@@ -5,6 +5,7 @@ int beatSetting;
 static int bpm;
 
 wavedata_t presetSound[MAX_BEAT_SET];
+wavedata_t uploadSound;
 
 static pthread_t beating;
 void startBeatController(){
@@ -23,26 +24,36 @@ void* startBeat(){
     wavedata_t testFile;
     AudioMixer_readWaveFileIntoMemory(FREQ_TESTER, &testFile);
 
-    // wavedata_t drum_bd_hard;
-    // AudioMixer_readWaveFileIntoMemory(DRUM_BD_HARD, &drum_bd_hard);
-
-    // wavedata_t drum_cc;
-    // AudioMixer_readWaveFileIntoMemory(DRUM_CC, &drum_cc);
-
-    // wavedata_t drum_snare_soft;
-    // AudioMixer_readWaveFileIntoMemory(DRUM_SNARE_SOFT, &drum_snare_soft);
+    beatSetting = 0;
 
     presetSound[0] = testFile;
     // presetSound[1] = drum_bd_hard;
     // presetSound[2] = drum_cc;
     // presetSound[3] = drum_snare_soft;
 
-    while (isRunning) {
-        playASound(0);
-        sleepForMs(10000);
+    while (isRunning)
+    {
+        if(beatSetting == 0){
+            sleepForMs(1000);
+        }
+        else if(beatSetting == 1){
+            playASound(0);
+            sleepForMs(10000);
+        }
     }
-
     return NULL;
+}
+//void setNewSound(){
+//    wavedata_t testFile;
+//}
+
+void initialUploadWave(){
+
+    if(uploadSound.pData != NULL){
+        AudioMixer_freeWaveFileData(&uploadSound);
+    }
+    AudioMixer_readWaveFileIntoMemory(UPLOADED_WAVE_FILE, &uploadSound);
+    AudioMixer_queueSound(&uploadSound);
 }
 
 bool playASound(int index){

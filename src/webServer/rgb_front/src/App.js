@@ -5,6 +5,8 @@ import {useEffect, useState} from 'react';
 import io from 'socket.io-client';
 import AudioVisualiser from "./component/AudioVisualiser";
 import BrightnessBar from './component/BrightnessBar';
+import WaveFileUpload from './component/WaveFileUpload'
+
 
 const socket = io('http://192.168.7.2:8080');
 function App() {
@@ -25,7 +27,7 @@ function App() {
   useEffect(()=>{
     const getSpectrumInterval = setInterval(()=>{
       sendMessage("getSpectrum\n");
-    }, 100)
+    }, 1000)
     return () => clearInterval(getSpectrumInterval);
   },[])
 
@@ -73,7 +75,7 @@ function App() {
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
 
         <h1>UDP Messages</h1>
-        <p>{messages}</p>
+        {/*<p style={{display: "inline", margin: 0, padding: 0 }}>{messages}</p>*/}
 
         <div>
           <AudioVisualiser spectrum = {spectrum}/>
@@ -81,6 +83,9 @@ function App() {
 
         <div>
           <BrightnessBar brightness = {brightness}/>
+        </div>
+        <div>
+          <WaveFileUpload />
         </div>
 
         <button onClick={() => sendMessage("help")}> click me for help!</button>
