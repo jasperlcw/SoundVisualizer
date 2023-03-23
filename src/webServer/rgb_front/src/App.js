@@ -27,7 +27,7 @@ function App() {
   useEffect(()=>{
     const getSpectrumInterval = setInterval(()=>{
       sendMessage("getSpectrum\n");
-    }, 1000)
+    }, 100)
     return () => clearInterval(getSpectrumInterval);
   },[])
 
@@ -35,7 +35,7 @@ function App() {
   useEffect(()=>{
     const getBrightnessInterval = setInterval(()=>{
       sendMessage("getBrightness\n");
-    }, 100)
+    }, 1000)
     return () => clearInterval(getBrightnessInterval);
   },[])
 
@@ -84,7 +84,7 @@ function App() {
         <div>
           <BrightnessBar brightness = {brightness}/>
         </div>
-        <div>
+        <div style={{width:"60%", margin: "1% 2% 1% 2%"}}>
           <WaveFileUpload />
         </div>
 

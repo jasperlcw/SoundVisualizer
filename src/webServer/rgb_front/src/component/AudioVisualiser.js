@@ -35,7 +35,8 @@ const AudioVisualiser = ({spectrum}) => {
         }
 
         for (let i = 0; i < spectrumValues.length && i < 32; i ++) {
-            const barHeight = Math.floor(spectrumValues[i] / 10 * maxBarHeight);
+            let logValue = Math.log10(spectrumValues[i]) > 1 ? Math.log10(spectrumValues[i]) : 1;
+            const barHeight = Math.floor(spectrumValues[i] / 10 * (maxBarHeight / logValue));
             let currentIndex = 0;
             for (let row = maxBarHeight-1; row >= 0; row--) {
                 if(currentIndex < barHeight) {
