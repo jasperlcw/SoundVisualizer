@@ -49,7 +49,6 @@ bool AudioMixer_setVolume(int newVolume);
 
 void* playbackThread(void* arg);
 
-
 void startSpectrumThread();
 void clearSpectrumThread();
 void* generateSpectrum();

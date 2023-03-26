@@ -91,9 +91,6 @@ void AudioMixer_init(void)
     // ..allocate playback buffer:
     playbackBuffer = malloc(playbackBufferSize * sizeof(*playbackBuffer));
 
-
-
-
     // Launch playback thread:
     pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
     startSpectrumThread();
@@ -219,7 +216,6 @@ int AudioMixer_getVolume()
 // Written by user "trenki".
 bool AudioMixer_setVolume(int newVolume)
 {
-
     // Ensure volume is reasonable; If so, cache it for later getVolume() calls.
     if (newVolume < AUDIOMIXER_MIN_VOLUME || newVolume > AUDIOMIXER_MAX_VOLUME) {
         //use for get value without prompt
@@ -263,7 +259,7 @@ static void fillPlaybackBuffer(short *buff, int size)
     memset(buff , 0, sizeof(*buff) * size);
 
     pthread_mutex_lock(&lock);
-    for(int i=0; i<MAX_SOUND_BITES; i++){
+    for(int i = 0; i < MAX_SOUND_BITES; i++){
 
         wavedata_t* tempPSound = soundBites[i].pSound;
         // If the sound bite slot is unused, do nothing for this slot.
@@ -296,7 +292,6 @@ static void fillPlaybackBuffer(short *buff, int size)
 
 void* playbackThread(void* arg)
 {
-
     while (isRunning) {
         // Generate next block of audio
         fillPlaybackBuffer(playbackBuffer, playbackBufferSize);
@@ -330,7 +325,6 @@ void* playbackThread(void* arg)
 //spectrum output is 32
 int numOfSampleFreq = 32;
 
-
 void startSpectrumThread(){
     //init fftw plans
 
@@ -357,7 +351,6 @@ double* getSpectrum(){
 int getSpectrumCount(){
     return numOfSampleFreq;
 }
-
 
 void* generateSpectrum(){
     //Spectrum range
@@ -419,5 +412,6 @@ void* generateSpectrum(){
 //        printf("\n");
         sleepForMs(100);
     }
+
     return NULL;
 }
