@@ -396,11 +396,11 @@ void* generateSpectrum(){
                 bias++;
             }
             //avg
-            spectrum[i] = (currentSum / (currentAddFactor+1));
+            spectrum[i] = (currentSum / (currentAddFactor + 1));
 
             //bias to capture more high freq
             if(bias > biasStart){
-                currentAddFactor+=5;
+                currentAddFactor += 5;
             }
 
         }
