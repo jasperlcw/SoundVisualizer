@@ -388,11 +388,11 @@ static void ledMatrix_setPixel(int x, int y, int colour)
     return;
 }
 
-void LED_init(void)
+void LED_init(LED_Mode mode)
 {
     pthread_mutex_init(&ledScreenMutex, NULL);
     sem_init(&ledSem, 0, 0);
-    currentMode = LED_CLOCK;
+    currentMode = mode;
     isRunning = true;
 
     pthread_create(&ledThreadID, NULL, &ledThread, NULL);

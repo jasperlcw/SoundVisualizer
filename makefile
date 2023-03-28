@@ -35,3 +35,7 @@ node:
 
 react:
 	cd $(PUBDIR)/final-server-copy/rgb_front && sudo npm run build
+	
+testLED:
+	cd src/testLED && make
+	
