@@ -1,7 +1,8 @@
-#include "include/udpComms.h"
 #include "audioMixer/audioMixer_template.h"
-#include "include/potentiometer.h"
 #include "audioMixer/BeatController.h"
+#include "include/ledControl.h"
+#include "include/potentiometer.h"
+#include "include/udpComms.h"
 
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
@@ -137,6 +138,7 @@ void* StartUDPServer(){
         else if(strcmp(cmd[0], "getSpectrum\n") == 0){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
+            LED_projectSpectrum();
 
             doubleArrayToJson(spectrum, spectrumSize, "value");
             sprintf(messageTx, "spectrum %s", tempJson);
@@ -147,7 +149,6 @@ void* StartUDPServer(){
             sprintf(messageTx, "brightness %d", brightnessPercent);
         }
         // set new Music
-
         else if(strcmp(cmd[0], "setMusic") == 0){
             sprintf(messageTx, "200");
             initialUploadWave();
@@ -169,4 +170,3 @@ void* StartUDPServer(){
 
     return 0;
 }
-
