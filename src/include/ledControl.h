@@ -22,8 +22,8 @@ typedef enum LED_Mode {
 } LED_Mode;
 
 // Initializes the I2C registers for displaying to the LED and starts
-// with the mode being to display a 24-hour clock.
-void LED_init(void);
+// with the mode being the passed in mode value.
+void LED_init(LED_Mode mode);
 
 // Cleans up the I2C registers for displaying to the LED.
 void LED_cleanup(void);
