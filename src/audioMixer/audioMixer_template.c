@@ -370,16 +370,20 @@ void* generateSpectrum(){
         int currentTotal = 0;
         int bias = 0;
         int biasStart = 24;
+        double real = 0;
+        double img = 0;
+        double currentValue = 0;
+        double currentSum = 0;
 
         for(int i = 0; i < numOfSampleFreq; i++){
 
-            double currentSum = 0;
+            currentSum = 0;
             for (int j = 0; j <= currentAddFactor; j++){
 
                 // fftw output is a complex number;
-                double real = fftwOut[currentTotal][0];
-                double img = fftwOut[currentTotal][1];
-                double currentValue = sqrt(real * real + img * img);
+                real = fftwOut[currentTotal][0];
+                img = fftwOut[currentTotal][1];
+                currentValue = sqrt(real * real + img * img);
 
                 if(isnan(currentValue))                          currentValue = 0;  //nan
                 if(isnan(currentValue) && signbit(currentValue)) currentValue = 0;  //-nan
