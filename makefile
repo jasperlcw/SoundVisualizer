@@ -22,13 +22,13 @@ CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror -Wshadow
 LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB
 FFTW3_LFLAGS = -L$(HOME)/cmpt433/public/fftw3
 
-all: wav node react
+all: wav fftw3 node react
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) $(FFTW3_LFLAGS) -lpthread -lasound -lfftw3 -lm
 
-#fftw3:
-#	sudo apt-get install fftw3
-#	mkdir -p $(LIBDIR)/fftw3/
-#	cp /usr/lib/arm-linux-gnueabihf/libfftw3.so.3.5.8 $(LIBDIR)/fftw3/
+fftw3:
+	sudo apt-get install libfftw3-dev
+	mkdir -p $(LIBDIR)/fftw3/
+	cp -R src/lib/* $(LIBDIR)/fftw3/
 
 # Copy wave files to the shared folder
 wav:
