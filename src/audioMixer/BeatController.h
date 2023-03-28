@@ -14,11 +14,13 @@
 #define MAX_SOUND_SET 4
 extern wavedata_t presetSound[MAX_SOUND_SET];
 
-#define TEST "final-wav-files/test.wav"
-#define FREQ_TESTER "final-wav-files/freqTester_old.wav"
-#define DRUM_BD_HARD "final-wav-files/100051__menegass__gui-drum-bd-hard.wav"
-#define DRUM_CC "final-wav-files/100053__menegass__gui-drum-cc.wav"
-#define DRUM_SNARE_SOFT "final-wav-files/100059__menegass__gui-drum-snare-soft.wav"
+#define DIR_PREFIX "/mnt/remote/myApps/"
+
+#define TEST DIR_PREFIX "final-wav-files/test.wav"
+#define FREQ_TESTER DIR_PREFIX "final-wav-files/freqTester_old.wav"
+#define DRUM_BD_HARD DIR_PREFIX "final-wav-files/100051__menegass__gui-drum-bd-hard.wav"
+#define DRUM_CC DIR_PREFIX "final-wav-files/100053__menegass__gui-drum-cc.wav"
+#define DRUM_SNARE_SOFT DIR_PREFIX "final-wav-files/100059__menegass__gui-drum-snare-soft.wav"
 
 #define UPLOADED_WAVE_FILE "final-wav-files/uploaded.wav"
 
