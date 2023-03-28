@@ -28,7 +28,9 @@ all: wav fftw3 node react
 fftw3:
 	sudo apt-get install libfftw3-dev
 	mkdir -p $(LIBDIR)/fftw3/
+	chmod a+rwx $(LIBDIR)/fftw3/
 	cp -R src/lib/* $(LIBDIR)/fftw3/
+	mv $(LIBDIR)/fftw3/libfftw3.so.* $(LIBDIR)/fftw3/libfftw3.so
 
 # Copy wave files to the shared folder
 wav:
