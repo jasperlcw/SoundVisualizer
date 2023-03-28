@@ -3,8 +3,6 @@
 // Note: Generates low latency audio on BeagleBone Black; higher latency found on host.
 #include "audioMixer_template.h"
 #include <alsa/asoundlib.h>
-#include <stdbool.h>
-#include <pthread.h>
 #include <limits.h>
 #include <alloca.h> // needed for mixer
 #include <math.h>
@@ -22,7 +20,6 @@ static fftw_plan fftwPlan;
 int fftwCount;
 static pthread_t spectrumThread;
 double* spectrum;
-
 
 static unsigned long playbackBufferSize = 0;
 static short *playbackBuffer = NULL;
@@ -95,7 +92,6 @@ void AudioMixer_init(void)
     pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
     startSpectrumThread();
 }
-
 
 // Client code must call AudioMixer_freeWaveFileData to free dynamically allocated data.
 void AudioMixer_readWaveFileIntoMemory(char *fileName, wavedata_t *pSound)

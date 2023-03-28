@@ -4,21 +4,21 @@
 *   the provided CMPT 433 resources: https://github.com/MontreaI/BeagleBone-Green-Adafruit-16x32-LED-Matrix-Sample-Code/blob/master/test_ledMatrix.c
 */
 
-#include "include/ledControl.h"
+#include "audioMixer/audioMixer_template.h"
 #include "include/currentTime.h"
+#include "include/ledControl.h"
 #include "include/ledMap.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <string.h>
-#include <time.h>
+#include <math.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 
 /* GPIO Pins Definition */
 #define RED1_PIN 8     // UPPER
@@ -64,7 +64,7 @@ static int fileDesc_c;
 static pthread_t ledThreadID;
 static pthread_mutex_t ledScreenMutex;
 static LED_Mode currentMode;
-static bool isRunning;
+static bool isBoardRunning;
 static sem_t ledSem;
 
 // Function for the thread to continuously refresh the LED panel.
@@ -72,45 +72,6 @@ static void* ledThread(void *vargp);
 
 // Static helper functions
 static void updateClockDisplay(void);
-
-// Taken from page 7 of assignment 1 description
-static void sleepForMs(long long delayInMs)
-{
-    const long long NS_PER_MS = 1000 * 1000;
-    const long long NS_PER_SECOND = 1000000000;
-    long long delayNs = delayInMs * NS_PER_MS;
-    int seconds = delayNs / NS_PER_SECOND;
-    int nanoseconds = delayNs % NS_PER_SECOND;
-    struct timespec reqDelay = {seconds, nanoseconds};
-    nanosleep(&reqDelay, (struct timespec *)NULL);
-}
-
-// Function for running a shell command
-static void runCommand(char *command)
-{
-    // Execute the shell command (output into pipe)
-    FILE *pipe = popen(command, "r");
-    // Ignore output of the command; but consume it
-    // so we don't get an error when closing the pipe.
-    char buffer[1024];
-    while (!feof(pipe) && !ferror(pipe))
-    {
-        if (fgets(buffer, sizeof(buffer), pipe) == NULL)
-            break;
-        // printf("--> %s", buffer); // Uncomment for debugging
-    }
-    // Get the exit code from the pipe; non-zero is an error:
-    // int exitCode = WEXITSTATUS(pclose(pipe));
-
-    // Commented out to squelch error messages when GPIO is already exported
-    // if (exitCode != 0)
-    // {
-    //     perror("Unable to execute command:");
-    //     printf(" command: %s\n", command);
-    //     printf(" exit code: %d\n", exitCode);
-    // }
-    pclose(pipe);
-}
 
 // Configures a pin on the BeagleBone to be GPIO
 static void configPinToGpio(int pinNumber)
@@ -393,7 +354,7 @@ void LED_init(LED_Mode mode)
     pthread_mutex_init(&ledScreenMutex, NULL);
     sem_init(&ledSem, 0, 0);
     currentMode = mode;
-    isRunning = true;
+    isBoardRunning = true;
 
     pthread_create(&ledThreadID, NULL, &ledThread, NULL);
 }
@@ -401,7 +362,7 @@ void LED_init(LED_Mode mode)
 void LED_cleanup(void)
 {
     printf("Stopping the thread for displaying to the LED panel.\n");
-    isRunning = false;
+    isBoardRunning = false;
     pthread_join(ledThreadID, NULL);
     pthread_mutex_destroy(&ledScreenMutex);
 
@@ -433,6 +394,31 @@ void LED_setDisplay(const int row, const int col, const int matrix[row][col])
         }
         pthread_mutex_unlock(&ledScreenMutex);
     }
+}
+
+void LED_projectSpectrum()
+{
+    double* spectrum = getSpectrum();
+    if(!spectrum){
+        return;
+    }
+
+    // Display a left to right sweep effect using LED_setDisplay
+    int matrix[16][32] = {0};    
+    for (int colNum = 0; colNum < 32; colNum++) {
+        int logValue = log10(spectrum[colNum]) > 1 ? log10(spectrum[colNum]) : 1;
+        int barHeight = floor(spectrum[colNum] / 10 * (16 / logValue));
+
+        int currentIndex = 0;
+        for (int rowNum = 15; rowNum >= 0; rowNum--) {
+            if (currentIndex < barHeight) {
+                matrix[rowNum][colNum] = LED_WHITE;
+            }
+            currentIndex++;
+        }
+        LED_setDisplay(16, 32, matrix);
+    }
+    LED_setDisplay(16, 32, matrix);
 }
 
 void LED_clearDisplay(void)
@@ -520,7 +506,7 @@ static void* ledThread(void *vargp)
     ledMatrix_setupPins();
 
     printf("Thread for displaying to the LED panel now running.\n");
-    while (isRunning) {
+    while (isBoardRunning) {
         // Update the LED matrix
         if (currentMode == LED_OFF) {
             memset(screen, 0, sizeof(screen));

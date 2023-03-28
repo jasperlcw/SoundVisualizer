@@ -11,6 +11,7 @@ const pixelDiameter = canvasHeight / maxBarHeight;
 
 // Initialize our board
 let board = [];
+
 for (let column = 0; column < 32; column++) {
     var row_array = [];
     for (let row = 0; row < 16; row++) {
@@ -34,17 +35,15 @@ const AudioVisualiser = ({spectrum}) => {
             return;
         }
 
-        for (let i = 0; i < spectrumValues.length && i < 32; i ++) {
-            let logValue = Math.log10(spectrumValues[i]) > 1 ? Math.log10(spectrumValues[i]) : 1;
-            const barHeight = Math.floor(spectrumValues[i] / 10 * (maxBarHeight / logValue));
+        for (let col = 0; col < spectrumValues.length && col < 32; col++) {
+            let logValue = Math.log10(spectrumValues[col]) > 1 ? Math.log10(spectrumValues[col]) : 1;
+            const barHeight = Math.floor(spectrumValues[col] / 10 * (maxBarHeight / logValue));
             let currentIndex = 0;
-            for (let row = maxBarHeight-1; row >= 0; row--) {
-                if(currentIndex < barHeight) {
-                    board[i][row].active = true;
-                    // board[i + 1][row].active = true;
+            for (let row = maxBarHeight - 1; row >= 0; row--) {
+                if (currentIndex < barHeight) {
+                    board[col][row].active = true;
                 } else {
-                    board[i][row].active = false;
-                    // board[i + 1][row].active = false;
+                    board[col][row].active = false;
                 }
                 currentIndex++;
             }
