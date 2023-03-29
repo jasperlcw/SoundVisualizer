@@ -1,6 +1,6 @@
 TARGET = final_project
 
-SOURCES = src/Utility.c  src/audioMixer/audioMixer_template.c src/potentiometer.c src/audioMixer/BeatController.c src/udpComms.c src/clap/clapdection.c src/joystick/joystick.c src/joystick/joystickcontrols.c src/clap/mic.c src/clap/circlebuffer.c src/main.c
+SOURCES = src/Utility.c  src/audioMixer/audioMixer_template.c src/potentiometer.c src/audioMixer/BeatController.c src/udpComms.c src/clap/clapdection.c src/joystick/joystick.c src/joystick/joystickcontrols.c src/clap/mic.c src/clap/circlebuffer.c src/main.c src/ledControl.c src/ledMap.c src/currentTime.c
 
 
 
@@ -16,7 +16,9 @@ CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror -Wshadow
 LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB
 FFTW3_LFLAGS = -L$(HOME)/cmpt433/public/fftw3
 
-all: wav node react
+all: wav node react c_app
+
+c_app:
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) $(FFTW3_LFLAGS) -lpthread -lasound -lfftw3 -lm
 
 fftw3:

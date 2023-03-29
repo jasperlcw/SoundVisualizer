@@ -4,11 +4,30 @@
 #include "include/potentiometer.h"
 #include "include/udpComms.h"
 
+// modules required
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include <netdb.h>
+#include <unistd.h>			// for close()
+
+#include <semaphore.h>
+#include <math.h>
+#include <pthread.h>
+
+// const
+#define MSG_MAX_LEN 1024
+#define PORT        12345
+
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
+
+static void displayMatrixOnLed(int row, int col, double *matrix);
 
 // Initializes the UDP thread.
 void UDP_init(void) {
@@ -138,7 +157,8 @@ void* StartUDPServer(){
         else if(strcmp(cmd[0], "getSpectrum\n") == 0){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
-            LED_projectSpectrum();
+            // LED_projectSpectrum();
+            displayMatrixOnLed(16, 32, spectrum);
 
             doubleArrayToJson(spectrum, spectrumSize, "value");
             sprintf(messageTx, "spectrum %s", tempJson);
@@ -169,4 +189,28 @@ void* StartUDPServer(){
     close(socketDescriptor);
 
     return 0;
+}
+
+// Helper function for displaying generated spectrum to the LED Panel
+static void displayMatrixOnLed(int row, int col, double *matrix)
+{
+    if (!matrix) {
+        return;
+    }
+
+    int ledMatrix[16][32] = {0};
+    for (int colNum = 0; colNum < 32; colNum++) {
+        int logValue = log10(matrix[colNum]) > 1 ? log10(matrix[colNum]) : 1;
+        int barHeight = floor(matrix[colNum] / 10 * (16 / logValue));
+
+        int currentIndex = 0;
+        for (int rowNum = 15; rowNum >= 0; rowNum--) {
+            if (currentIndex < barHeight) {
+                ledMatrix[rowNum][colNum] = LED_RED;
+            }
+            currentIndex++;
+        }
+        LED_setDisplay(row, col, ledMatrix);
+    }
+    LED_setDisplay(row, col, ledMatrix);
 }
