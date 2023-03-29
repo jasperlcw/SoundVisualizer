@@ -29,9 +29,9 @@ Circlebuffer* createBuffer(int n){
 
 //returns copy of the buffer reciever must free
 double* copyBuffer(Circlebuffer* buf){
-    
+    double* newbuf = malloc(sizeof(*newbuf) * buf->size);
+    while(buf->numobjects < buf->size);
     pthread_mutex_lock(&lock);
-    double* newbuf = malloc(sizeof(*newbuf) * buf->numobjects);
     memcpy(newbuf, buf->buffer, (buf->numobjects*sizeof(double)));
     pthread_mutex_unlock(&lock);
     return newbuf;
@@ -61,6 +61,18 @@ void clearBuffer(Circlebuffer* buf){
     buf->index = 0;
     buf->numobjects = 0;
     pthread_mutex_unlock(&lock);
+}
+
+double* getBufferWithLen(int *length, int *index, Circlebuffer* buf){
+
+    double* newbuf = malloc(sizeof(*newbuf) * buf->size);
+    while(buf->numobjects < buf->size);
+    pthread_mutex_lock(&lock);
+    *length = buf->size;
+    *index = buf->index;
+    memcpy(newbuf, buf->buffer, (buf->numobjects*sizeof(double)));
+    pthread_mutex_unlock(&lock);
+    return newbuf;
 }
 
 
