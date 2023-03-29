@@ -7,14 +7,16 @@
 #include "clapdection.h"
 #include "mic.h"
 #include "circlebuffer.h"
+#include "../Utility.h"
 
 
-double threshold = 75;
-double upperthreshold = 200;
+double threshold = 50;
+double upperthreshold = 300;
 static pthread_t detector;
 static bool run;
 static pthread_mutex_t lock;
 bool clap = false;
+bool clapFeature = true;
 
 static double average(double* arr, int size){
     double sum = 0;
@@ -34,42 +36,54 @@ static void* dectectClap(){
     double* LongTerm = NULL;
     double shortavg;
     double longavg;
-    int buffertime = 1000;
+    int buffertime = 4000;
     clock_t before;
     clock_t difference;
     int timedurationmsec;
     while(run){
-        ShortTerm = Mic_getShortHistory(&ShortLen);
-        
-        LongTerm = Mic_getLongHistory(&LongLen);
-        
-        shortavg = average(ShortTerm,ShortLen);
-        longavg = average(LongTerm,LongLen);
-        if((shortavg)  > threshold + longavg && (shortavg) < upperthreshold + longavg ){ 
-            if(!clap1){
-                clap1 = true;
-                before = clock();
-            }
-            else{
-                printf("clap2,%f,%f,%f,%f\n",shortavg, longavg,threshold, upperthreshold   );
-                pthread_mutex_lock(&lock);
-                clap = true;
-                pthread_mutex_unlock(&lock);    
-            }
-            Mic_Longclear();
-        }
 
-        if(clap1){
-            difference = clock() - before;
-            timedurationmsec = difference * 1000 / CLOCKS_PER_SEC;
-            if(timedurationmsec > buffertime){
-                clap1 = false;
-            }
+        if(!clapFeature){
+            sleepForMs(2500);
+
         }
-        free(ShortTerm);
-        free(LongTerm);
+        else{
+           
+            ShortTerm = Mic_getShortHistory(&ShortLen);
+            
+            LongTerm = Mic_getLongHistory(&LongLen);
+            
+            shortavg = average(ShortTerm,ShortLen);
+            longavg = average(LongTerm,LongLen);
+            if((shortavg)  > threshold + longavg && (shortavg) < upperthreshold + longavg ){ 
+                if(!clap1){
+                    printf("clap1,%f,%f,%f,%f\n",shortavg, longavg,threshold, upperthreshold   );
+                    clap1 = true;
+                    before = clock();
+                    Mic_Longclear();
+                }
+                else{
+                    clap1 = false;
+                    printf("clap2,%f,%f,%f,%f\n",shortavg, longavg,threshold, upperthreshold   );
+                    pthread_mutex_lock(&lock);
+                    clap = true;
+                    pthread_mutex_unlock(&lock);    
+                    Mic_Longclear();
+                }
+                
+            }
+
+            if(clap1){
+                difference = clock() - before;
+                timedurationmsec = difference * 1000 / CLOCKS_PER_SEC;
+                if(timedurationmsec > buffertime){
+                    clap1 = false;
+                }
+            }
+            free(ShortTerm);
+            free(LongTerm);
+        }
     }
-    return 0;
+    return NULL;
    
 }
 
@@ -100,4 +114,9 @@ bool isClap(){
     clap = false;
     pthread_mutex_unlock(&lock);
     return ret;
+}
+
+void clapOn(bool val){
+    clapFeature = val;
+
 }
