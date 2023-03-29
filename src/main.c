@@ -9,10 +9,14 @@
 #include "audioMixer/audioMixer_template.h"
 #include "audioMixer/BeatController.h"
 #include "include/ledControl.h"
+#include "clap/clapdection.h"
+#include "joystick/joystickcontrols.h"
 
 int main(void)
 {
     // Blocking call here until shutdown procedure initiated by UDP or joystick
+    startMicDetection();
+    joystickstart();
 
     LED_init(LED_LISTEN);
     AudioMixer_init();
