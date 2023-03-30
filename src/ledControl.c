@@ -19,6 +19,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <errno.h>
 
 /* GPIO Pins Definition */
 #define RED1_PIN 8     // UPPER
@@ -96,7 +97,7 @@ static void exportAndOut(int pinNumber)
 
     char fileNameBuffer[1024];
     sprintf(fileNameBuffer, "/sys/class/gpio/gpio%d/direction", pinNumber);
-    FILE *gpioDirP = fopen(fileNameBuffer, "w");
+    FILE *gpioDirP = fopen(fileNameBuffer, "r");
 
     // Check for whether the pin is exported
     if (gpioDirP == NULL) {
@@ -499,6 +500,23 @@ static void updateClockDisplay(void)
 
 static void* ledThread(void *vargp)
 {
+    struct sched_param sch_params;
+    if (thread_setschedparam(pthread_self(), SCHED_FIFO, &sch_params) == EPERM) {
+        perror("Permission error for elevating priority of LED driving thread.");
+    }
+    else {
+        perror("Error elevating priority of LED driving thread.");
+    }
+
+    int policy = 0;
+    if (pthread_getschedparam(pthread_self(), &policy, &sch_params) != 0) {
+        puts("Error when checking priority level of LED thread.");
+    }
+    if (policy != SCHED_FIFO) {
+        puts("Priority level of the thread is not actually SCHED_FIFO (1) even after changing.");
+        printf("Actual priority level: %d\n", sch_params.sched_priority);
+    }
+
     // Reset the screen
     memset(screen, 0, sizeof(screen));
 
