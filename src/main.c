@@ -12,8 +12,21 @@
 #include "clap/clapdection.h"
 #include "joystick/joystickcontrols.h"
 
+#include <sys/resource.h>
+#include <unistd.h>
+#include <errno.h>
+
 int main(void)
 {
+    // Priority_value = Nice_value + 20
+    // Default niceness is 0
+
+    int ret = setpriority(PRIO_PROCESS, 0, -20);
+    if (ret != 0) {
+        perror("Error for setting priority");
+        puts("This will cause LED panel to flicker at an increased amount.");
+    }
+
     // Blocking call here until shutdown procedure initiated by UDP or joystick
     startMicDetection();
     joystickstart();
