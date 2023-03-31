@@ -5,7 +5,7 @@ const LedOffPage = () => {
 
     return (
         <div className="page-header">
-            <h1>LED is OFF</h1>
+            <h1>LED OFF</h1>
         </div>
     )
 }

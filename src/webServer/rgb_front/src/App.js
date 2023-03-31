@@ -32,8 +32,9 @@ function App() {
   const [spectrum, setSpectrum] = useState([]);
   const [brightness, setBrightness] = useState([]);
   const [board, setBoard] = useState([]);
+  const [timeBoard, setTimeBoard] = useState([]);
   const [screen, setScreen] = useState([]);
-  const [mode, setMode] = useState("Do you guys no have phone?");
+  const [mode, setMode] = useState("Do you guys not have phone?");
 
   // set the message state when it received a message from bbg
   useEffect(() => {
@@ -45,9 +46,11 @@ function App() {
 
   //initial board
   useEffect(()=>{
-    const newBoard = createNewboard();
+    let newBoard = createNewboard();
     setBoard(newBoard);
+    setTimeBoard(newBoard);
   }, [])
+
 
   //send getMode to bbg
   useEffect(()=>{
@@ -106,14 +109,14 @@ function App() {
     <div className="App">
       <header className="App-header">
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
-        <p class = "titleText">TEAM <span style = {{ color: 'red' }}>R</span> <span style = {{ color: 'green'}}>G</span> <span style = {{ color: 'blue' }}>B</span></p>
+        <p class = "titleText">TEAM <span style = {{ color: 'red' }}>R</span><span style = {{ color: 'green'}}>G</span><span style = {{ color: 'blue' }}>B</span></p>
 
         <div style={{ display: 'flex' , width: '80%', justifyContent: "center", alignItems: "center"}}>
           <div style={{ flex: 1, alignItems: "flex-end"}}>
             <button class = "custom-button" onClick={() => sendMessage("setPreviousMode")}> {"<"} </button>
           </div>
           <div style={{flex: 0.8}}>
-            <p class = "modeText">Current Mode: {mode}</p>
+            <p class = "modeText">{LED_Mode[mode]}</p>
           </div>
           <div style={{ flex: 1, alignItems: "flex-start"}}>
             <button class = "custom-button" onClick={() => sendMessage("setNextMode")}> {">"} </button>
@@ -125,7 +128,7 @@ function App() {
         {/*<p style={{display: "inline", margin: 0, padding: 0 }}>{messages}</p>*/}
         {
           mode === "0" ? (<LedOffPage/>) : 
-          mode === "1" ? (<DisplayTimePage board = {board} setBoard = {setBoard} screen = {screen} sendMessage = {sendMessage}/>) : 
+          mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage}/>) : 
           mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard} brightness = {brightness} sendMessage = {sendMessage}/>):
           <div></div>
         }

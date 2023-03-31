@@ -12,8 +12,7 @@ const canvasHeight = 400;
 const canvasWidth = 800;
 
 
-
-const DisplayTimePage = ({board, setBoard, screen, sendMessage}) => {
+const DisplayTimePage = ({timeBoard, setTimeBoard, screen, sendMessage}) => {
 
     const canvasRef = useRef(null);
 
@@ -28,18 +27,18 @@ const DisplayTimePage = ({board, setBoard, screen, sendMessage}) => {
     //initial board
     useEffect(()=>{
         const newBoard = createNewboard();
-        setBoard(newBoard);
+        setTimeBoard(newBoard);
     }, [])
 
     return (
         <div className="page-header">
-            <h1>TIME</h1>
+            {/* <h1>TIME</h1> */}
             <div>
-                <TimeVisualiser board = {board} setBoard = {setBoard} screen = {screen} canvasRef ={canvasRef}/>
+                <TimeVisualiser timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} canvasRef ={canvasRef}/>
             </div>
-            <div>
+            {/* <div>
                 <canvas ref = {canvasRef} id="Time" className="TimeCanvas" width={canvasWidth} height={canvasHeight}/>
-            </div>
+            </div> */}
 
         </div>
     )

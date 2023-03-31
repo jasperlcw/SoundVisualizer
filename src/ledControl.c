@@ -378,7 +378,6 @@ void LED_wait(void)
 
 void LED_setMode(int mode)
 {
-    printf("%d \n", mode);
     if(mode > 2){
         mode = 0;
     }
@@ -545,7 +544,9 @@ static void* ledThread(void *vargp)
         else if (currentMode == LED_CLOCK) {
             updateClockDisplay();
         }
-
+        else if(currentMode == LED_LISTEN){
+            LED_projectSpectrum();
+        }
         // Display the matrix
         ledMatrix_refresh();
     }

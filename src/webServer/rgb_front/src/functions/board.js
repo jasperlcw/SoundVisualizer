@@ -46,13 +46,10 @@ const screenColor = {
     7: 'white'
 }
 export const setBoardWithScreen = (board, screen) =>{
-    console.log(screen);
-    console.log(board);
+    console.log(screen)
     for (let col = 0; col < 32; col++) {
         for (let row = 0; row < 16; row++) {
-            console.log(screen[col][row] + " " + row + " " + col);
-
-            if(screen[col][row] > 0){
+            if(screen[col][row] != 0){
                 board[col][row].active = true;
                 board[col][row].color = screenColor[screen[col][row]];
             }

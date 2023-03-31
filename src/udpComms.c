@@ -168,7 +168,6 @@ void* StartUDPServer(){
         else if(strcmp(cmd[0], "getSpectrum") == 0){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
-            LED_projectSpectrum();
 
             doubleArrayToJson(spectrum, spectrumSize, "value");
             sprintf(messageTx, "spectrum %s", tempJson);
@@ -192,16 +191,19 @@ void* StartUDPServer(){
         //set current running mode
         else if(strcmp(cmd[0], "setMode") == 0){
             LED_setMode(atoi(cmd[1]));
+            LED_clearDisplay();
             sprintf(messageTx, "200");
         }
         //set +1 to current running mode
         else if(strcmp(cmd[0], "setNextMode") == 0){
             LED_nextMode();
+            LED_clearDisplay();
             sprintf(messageTx, "200");
         }
         //set -1 to current running mode
         else if(strcmp(cmd[0], "setPreviousMode") == 0){
             LED_PreviousMode();
+            LED_clearDisplay();
             sprintf(messageTx, "200");
         }
 

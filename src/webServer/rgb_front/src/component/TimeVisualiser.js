@@ -1,25 +1,30 @@
 
 import { useEffect} from 'react';
 import './AudioVisualStyle.css';
-import {setBoardWithScreen} from '../functions/board'
+import {setBoardWithScreen, createNewboard} from '../functions/board'
 
-const TimeVisualiser = ({board, setBoard, screen, canvasRef}) => {
+const TimeVisualiser = ({timeBoard, setTimeBoard, screen, canvasRef}) => {
 
-    let newBoard = [];
+    
+    const canvasWidth = 800;
     const canvasHeight = 400;
     const maxBarHeight = 16;
     const pixelDiameter = canvasHeight / maxBarHeight;
 
     useEffect(() =>{
+        let newBoard = [];
         let currentScreen = screen.value;
-        console.log(currentScreen);
-        newBoard = board;
-
+        newBoard = timeBoard;
         if(currentScreen){
-            newBoard = setBoardWithScreen(board, currentScreen)
+            newBoard = setBoardWithScreen(newBoard, currentScreen)
         }
-        drawCanvas();
-        setBoard(newBoard);
+        setTimeBoard(newBoard);
+    },[screen])
+
+    useEffect(() => {
+        if(timeBoard){
+            drawCanvas();
+        }
     },[screen])
 
 
@@ -32,21 +37,22 @@ const TimeVisualiser = ({board, setBoard, screen, canvasRef}) => {
 
         ctx.fillStyle = `rgb(${0}, ${0}, ${0})`
         ctx.rect(0, 0, canvas.width, canvas.height);
+
         ctx.fill();
 
         for (let column = 0; column < 32; column++) {
             for (let row = 0; row < 16; row++) {
                 ctx.beginPath();
                 ctx.arc(
-                    (pixelDiameter / 2) + (newBoard[column][row].x * pixelDiameter),
-                    (pixelDiameter / 2) + (newBoard[column][row].y * pixelDiameter),
+                    (pixelDiameter / 2) + (timeBoard[column][row].x * pixelDiameter),
+                    (pixelDiameter / 2) + (timeBoard[column][row].y * pixelDiameter),
                     pixelDiameter / 2,
                     0,
                     2 * Math.PI
                 );
 
-                if(newBoard[column][row].active){
-                    ctx.fillStyle = newBoard[column][row].color;
+                if(timeBoard[column][row].active){
+                    ctx.fillStyle = timeBoard[column][row].color;
                 }
                 else{
                     ctx.fillStyle = `rgb(${50}, ${50}, ${50})`;
@@ -59,7 +65,7 @@ const TimeVisualiser = ({board, setBoard, screen, canvasRef}) => {
 
     return (
         <div>
-            {/* <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/> */}
+            <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
         </div>
     );
 }

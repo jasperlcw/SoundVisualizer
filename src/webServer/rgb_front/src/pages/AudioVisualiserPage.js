@@ -48,9 +48,9 @@ const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage
                 <AudioVisualiser spectrum = {spectrum} board = {board} setBoard = {setBoard} canvasRef ={canvasRef}/>
             </div>
 
-            <div>
+            {/* <div>
                 <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
-            </div>
+            </div> */}
 
             <div>
                 <BrightnessBar brightness = {brightness}/>
