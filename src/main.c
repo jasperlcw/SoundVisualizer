@@ -21,10 +21,11 @@ int main(void)
     // Priority_value = Nice_value + 20
     // Default niceness is 0
 
+    // Setting priority occasionally causes audio buffer underflow 
     int ret = setpriority(PRIO_PROCESS, 0, -20);
     if (ret != 0) {
         perror("Error for setting priority");
-        puts("This will cause LED panel to flicker at an increased amount.");
+        puts("This may cause LED panel to flicker at an increased amount.");
     }
 
     // Blocking call here until shutdown procedure initiated by UDP or joystick
@@ -39,5 +40,4 @@ int main(void)
     clearBeatController();
     AudioMixer_cleanup();
     LED_wait();
-//    Visualizer_run();
 }

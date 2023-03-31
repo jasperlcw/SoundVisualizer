@@ -13,13 +13,16 @@ CC_C = $(CROSS_TOOL)gcc
 
 CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror -Wshadow
 
-LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB
-FFTW3_LFLAGS = -L$(HOME)/cmpt433/public/fftw3
+LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB -L$(HOME)/cmpt433/public/fftw3
 
-all: wav node react c_app
+all: wav node react c_app scripts
 
 c_app:
-	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) $(FFTW3_LFLAGS) -lpthread -lasound -lfftw3 -lm
+	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET) $(LFLAGS) -lpthread -lasound -lfftw3 -lm
+	
+scripts:
+	sudo chmod 755 ./finalProjectStart*.sh
+	cp ./finalProjectStart*.sh $(PUBDIR) 
 
 fftw3:
 	sudo apt-get install fftw3
