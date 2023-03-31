@@ -14,6 +14,8 @@ double* Mic_getShortHistory(int *length);
 //returns the history of the long term buffer
 double* Mic_getLongHistory(int *length);
 
+double* Mic_getLongHistoryWithIndex(int *length, int *index);
+
 //returns the total number of samples taken
 long long Mic_getNumSamplesTaken();
 

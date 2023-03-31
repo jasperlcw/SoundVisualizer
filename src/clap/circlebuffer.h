@@ -26,4 +26,6 @@ int getlength(Circlebuffer* buf);
 //deletes the buffer and frees memory associated with the buffer 
 void deleteBuffer(Circlebuffer* buf);
 
+double* getBufferWithLen(int *length, int *index, Circlebuffer* buf);
+
 #endif

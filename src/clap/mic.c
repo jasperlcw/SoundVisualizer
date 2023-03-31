@@ -8,8 +8,8 @@
 
 
 #define MIC "/sys/bus/iio/devices/iio:device0/in_voltage1_raw"
-#define SHORT_TERM_SIZE 20
-#define LONG_TERM_SIZE 500
+#define SHORT_TERM_SIZE 40
+#define LONG_TERM_SIZE 734
 
 static pthread_t reader;
 static Circlebuffer* ShortTermBuffer;
@@ -82,6 +82,11 @@ double* Mic_getLongHistory(int *length){
     *length = getlength(LongTermBuffer);
     double* i = copyBuffer(LongTermBuffer);
     return i;
+}
+
+double* Mic_getLongHistoryWithIndex(int *length, int *index){
+    double* ret = getBufferWithLen(length, index, LongTermBuffer);
+    return ret;
 }
 
 

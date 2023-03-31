@@ -4,11 +4,30 @@
 #include "include/potentiometer.h"
 #include "include/udpComms.h"
 
+// modules required
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include <netdb.h>
+#include <unistd.h>			// for close()
+
+#include <semaphore.h>
+#include <math.h>
+#include <pthread.h>
+
+// const
+#define MSG_MAX_LEN 1024
+#define PORT        12345
+
 static pthread_t UDPThreadID;
 static sem_t UDPRunBlocker;
 
 // previous command
 char previousCmd[MSG_MAX_LEN];
+
+static void displayMatrixOnLed(int row, int col, double *matrix);
 
 // Initializes the UDP thread.
 void UDP_init(void) {
@@ -229,4 +248,53 @@ void* StartUDPServer(){
     close(socketDescriptor);
 
     return 0;
+}
+
+static int potentiometerToColour()
+{
+    // We have 8 LED settings, and a reading of 0 - 99
+    double partition = 100 / 8;
+    int reading = Potentiometer_getReading();
+
+    if (reading < partition * 1) {
+        return LED_BLACK;
+    } else if (reading < partition * 2) {
+        return LED_RED;
+    } else if (reading < partition * 3) {
+        return LED_GREEN;
+    } else if (reading < partition * 4) {
+        return LED_YELLOW;
+    } else if (reading < partition * 5) {
+        return LED_BLUE;
+    } else if (reading < partition * 6) {
+        return LED_MAGENTA;
+    } else if (reading < partition * 7) {
+        return LED_TEAL;
+    } else {
+        return LED_WHITE;
+    }
+} 
+
+// Helper function for displaying generated spectrum to the LED Panel
+static void displayMatrixOnLed(int row, int col, double *matrix)
+{
+    if (!matrix) {
+        return;
+    }
+
+    int ledMatrix[16][32] = {0};
+    for (int colNum = 0; colNum < 32; colNum++) {
+        int logValue = log10(matrix[colNum]) > 1 ? log10(matrix[colNum]) : 1;
+        int barHeight = floor(matrix[colNum] / 10 * (16 / logValue));
+
+        int currentIndex = 0;
+        for (int rowNum = 15; rowNum >= 0; rowNum--) {
+            if (currentIndex < barHeight) {
+                ledMatrix[rowNum][colNum] = potentiometerToColour();
+            }
+            currentIndex++;
+        }
+        LED_setDisplay(row, col, ledMatrix);
+    }
+    LED_setDisplay(row, col, ledMatrix);
 }

@@ -37,7 +37,7 @@ void AudioMixer_cleanup(void);
 // readWaveFileIntoMemory(), and is freed by calling freeWaveFileData().
 void AudioMixer_readWaveFileIntoMemory(char *fileName, wavedata_t *pSound);
 void AudioMixer_freeWaveFileData(wavedata_t *pSound);
-
+  
 // Queue up another sound bite to play as soon as possible.
 void AudioMixer_queueSound(wavedata_t *pSound);
 
@@ -54,5 +54,5 @@ void clearSpectrumThread();
 void* generateSpectrum();
 double* getSpectrum();
 int getSpectrumCount();
-
+void changeAudioIn();
 #endif

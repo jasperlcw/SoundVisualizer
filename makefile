@@ -1,14 +1,8 @@
 TARGET = final_project
 
-SOURCES = src/audioMixer/audioMixer_template.c \
-	src/audioMixer/BeatController.c \
-	src/currentTime.c \
-	src/ledControl.c \
-	src/ledMap.c \
-	src/main.c \
-	src/potentiometer.c \
-	src/udpComms.c \
-	src/Utility.c
+SOURCES = src/Utility.c  src/audioMixer/audioMixer_template.c src/potentiometer.c src/audioMixer/BeatController.c src/udpComms.c src/clap/clapdection.c src/joystick/joystick.c src/joystick/joystickcontrols.c src/clap/mic.c src/clap/circlebuffer.c src/main.c src/ledControl.c src/ledMap.c src/currentTime.c
+
+
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
 LIBDIR = $(HOME)/cmpt433/public
@@ -19,18 +13,21 @@ CC_C = $(CROSS_TOOL)gcc
 
 CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror -Wshadow
 
-LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB
-FFTW3_LFLAGS = -L$(HOME)/cmpt433/public/fftw3
+LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB -L$(HOME)/cmpt433/public/fftw3
 
-all: wav fftw3 node react
-	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) $(FFTW3_LFLAGS) -lpthread -lasound -lfftw3 -lm
+all: wav node react c_app scripts
+
+c_app:
+	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET) $(LFLAGS) -lpthread -lasound -lfftw3 -lm
+	
+scripts:
+	sudo chmod 755 ./finalProjectStart*.sh
+	cp ./finalProjectStart*.sh $(PUBDIR) 
 
 fftw3:
-	sudo apt-get install libfftw3-dev
+	sudo apt-get install fftw3
 	mkdir -p $(LIBDIR)/fftw3/
-	chmod a+rwx $(LIBDIR)/fftw3/
-	cp -R src/lib/* $(LIBDIR)/fftw3/
-	mv $(LIBDIR)/fftw3/libfftw3.so.* $(LIBDIR)/fftw3/libfftw3.so
+	cp /usr/lib/arm-linux-gnueabihf/libfftw3.so $(LIBDIR)/fftw3/
 
 # Copy wave files to the shared folder
 wav:
@@ -45,7 +42,3 @@ node:
 
 react:
 	cd $(PUBDIR)/final-server-copy/rgb_front && sudo npm run build
-	
-testLED:
-	cd src/testLED && make
-	

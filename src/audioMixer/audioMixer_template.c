@@ -2,7 +2,10 @@
 // which are left as incomplete.
 // Note: Generates low latency audio on BeagleBone Black; higher latency found on host.
 #include "audioMixer_template.h"
+#include "../clap/mic.h"
 #include <alsa/asoundlib.h>
+#include <stdbool.h>
+#include <pthread.h>
 #include <limits.h>
 #include <alloca.h> // needed for mixer
 #include <math.h>
@@ -10,7 +13,8 @@
 // #include "../lib/fftw-3.5.8/api/fftw3.h"
 #include <fftw3.h>
 #include <stdio.h>
-
+#include <semaphore.h>
+#include "../clap/clapdection.h"
 static snd_pcm_t *handle;
 
 //fftw
@@ -20,6 +24,7 @@ static fftw_plan fftwPlan;
 int fftwCount;
 static pthread_t spectrumThread;
 double* spectrum;
+sem_t sem;
 
 static unsigned long playbackBufferSize = 0;
 static short *playbackBuffer = NULL;
@@ -92,6 +97,7 @@ void AudioMixer_init(void)
     pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
     startSpectrumThread();
 }
+
 
 // Client code must call AudioMixer_freeWaveFileData to free dynamically allocated data.
 void AudioMixer_readWaveFileIntoMemory(char *fileName, wavedata_t *pSound)
@@ -287,7 +293,7 @@ static void fillPlaybackBuffer(short *buff, int size)
 }
 
 void* playbackThread(void* arg)
-{
+{   
     while (isRunning) {
         // Generate next block of audio
         fillPlaybackBuffer(playbackBuffer, playbackBufferSize);
@@ -316,6 +322,21 @@ void* playbackThread(void* arg)
     return NULL;
 }
 
+//changes where it get audio from: 0 = UDP, 1 = MIC
+void changeAudioIn(){
+    int val;
+    sem_getvalue(&sem, &val);
+    if(val == 0){
+        sem_post(&sem);//changes to mic
+        clapOn(false);
+    } 
+    else{
+        sem_wait(&sem);//changes to udp
+        clapOn(true);
+    }
+}
+
+
 // Spectrum
 
 //spectrum output is 32
@@ -323,9 +344,11 @@ int numOfSampleFreq = 32;
 
 void startSpectrumThread(){
     //init fftw plans
+    sem_init(&sem, 0, 0);
+   
 
     // build Spectrum with 512 levels of freq
-    fftwCount = 1024;
+    fftwCount = 500;
 
     fftwIn = (double*) fftw_malloc(sizeof (double) * playbackBufferSize);
     fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) *playbackBufferSize);
@@ -348,19 +371,53 @@ int getSpectrumCount(){
     return numOfSampleFreq;
 }
 
+
+
 void* generateSpectrum(){
     //Spectrum range
     // spectrum will capt
     //example: https://nanohub.org/resources/16909/download/2013.02.08-ECE595E-L13.pdf
+    int val;
+    
 
     while(isRunning){
-        pthread_mutex_lock(&lock);
+        
+        sem_getvalue(&sem, &val);
+        //printf("%ld\n",playbackBufferSize );
+        if(val == 0){
+            pthread_mutex_lock(&lock);
 
-        //short to audio double
-        for (int i = 0; i < playbackBufferSize; i++){
-            fftwIn[i] = playbackBuffer[i] / 32768.0;
+            //short to audio double
+            for (int i = 0; i < playbackBufferSize; i++){
+                fftwIn[i] = playbackBuffer[i] / 32768.0;
+                // printf("%f\n",fftwIn[i]);
+            }
+            pthread_mutex_unlock(&lock);
         }
-        pthread_mutex_unlock(&lock);
+        else{
+            int len;
+            int index;
+            double* buf;
+            buf = Mic_getLongHistoryWithIndex(&len, &index);
+       
+            for(int i =0; i< len; i++){
+                if(index == 0){
+                    index = len;
+                }
+                index--;
+              
+                fftwIn[i] = (buf[index] - 1800) *1.25/1795;
+                //printf("%f\n",fftwIn[i]);
+                
+                
+                
+
+
+            }
+            free(buf);
+
+
+        }
         fftw_execute(fftwPlan);
 
         // most of the high frequency of the spectrum is useless
@@ -370,20 +427,16 @@ void* generateSpectrum(){
         int currentTotal = 0;
         int bias = 0;
         int biasStart = 24;
-        double real = 0;
-        double img = 0;
-        double currentValue = 0;
-        double currentSum = 0;
 
         for(int i = 0; i < numOfSampleFreq; i++){
 
-            currentSum = 0;
+            double currentSum = 0;
             for (int j = 0; j <= currentAddFactor; j++){
 
                 // fftw output is a complex number;
-                real = fftwOut[currentTotal][0];
-                img = fftwOut[currentTotal][1];
-                currentValue = sqrt(real * real + img * img);
+                double real = fftwOut[currentTotal][0];
+                double img = fftwOut[currentTotal][1];
+                double currentValue = sqrt(real * real + img * img);
 
                 if(isnan(currentValue))                          currentValue = 0;  //nan
                 if(isnan(currentValue) && signbit(currentValue)) currentValue = 0;  //-nan
@@ -396,21 +449,22 @@ void* generateSpectrum(){
                 bias++;
             }
             //avg
-            spectrum[i] = (currentSum / (currentAddFactor + 1));
+            spectrum[i] = (currentSum / (currentAddFactor+1));
 
             //bias to capture more high freq
             if(bias > biasStart){
-                currentAddFactor += 5;
+                currentAddFactor+=5;
             }
 
         }
-//        printf("total %d: add factor %f \n", currentTotal, currentAddFactor);
+        
+       // printf("total %d: add factor %f \n", currentTotal, currentAddFactor);
 
-//        for(int i = 0; i < numOfSampleFreq; i++){
-//            printf("%d: %0.0f ", i, spectrum[i] * 1000);
-//        }
-//        printf("\n");
-        sleepForMs(100);
+       // for(int i = 0; i < numOfSampleFreq; i++){
+        //    printf("%d: %f ", i, spectrum[i] * 1000);
+        //}
+        //printf("\n");
+        //sleepForMs(100);
     }
 
     return NULL;

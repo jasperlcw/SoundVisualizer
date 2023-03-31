@@ -44,9 +44,6 @@ LED_Mode LED_getMode();
 // Get the current Screen
 int (*getScreen())[16];
 
-// Based on a spectrum, sends a 16x32 matrix to the Adafruit board
-void LED_projectSpectrum();
-
 // Changes the colors displayed by the LED panel, where the passed in matrix
 // should be a size of 16x32 containing values of the defined constants in this module.
 // Note that the program will ignore inputs if the mode is set to CLOCK.

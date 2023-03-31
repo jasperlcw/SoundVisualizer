@@ -10,5 +10,5 @@ void startMicDetection();
 void stopMicDectection();
 //returns true if double clap is detected
 bool isClap();
-
+void clapOn(bool val);
 #endif
