@@ -228,12 +228,12 @@ void* StartUDPServer(){
             sprintf(messageTx, "200");
         }
 
-        // //press the screen
-        // else if(strcmp(cmd[0], "getScreen") == 0){
-        //     int (*screen)[16] = getScreen();
-        //     Int2DArrayToJson(screen, 32, 16, "value");
-        //     sprintf(messageTx, "screen %s", tempJson);
-        // }
+        //press the screen
+        else if(strcmp(cmd[0], "getScreen") == 0){
+            int (*screen)[16] = getScreen();
+            Int2DArrayToJson(screen, 32, 16, "value");
+            sprintf(messageTx, "screen %s", tempJson);
+        }
         
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
