@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+
 }
 
 .App-logo {
@@ -15,17 +16,52 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  max-height: 30vh;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-size: calc(6px + 1vmin);
   color: white;
 }
 
+.App-main {
+  background-color: #282c34;
+  /* max-height: 100vh; */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(6px + 1vmin);
+  color: white;
+}
+
+
+.custom-button {
+  background-color: #282c34;
+  color: white;
+  font-size: 4em;
+  text-align: center;
+  font-weight: bold;
+  border: none;
+  padding: 1%;
+  width: 80%;
+  cursor: pointer;
+}
+
 .App-link {
   color: #61dafb;
+}
+.modeText {
+  font-size: 2.5em;
+  margin: 1%;
+}
+.titleText{
+  margin: 1%;
+  font-size: 4em;
+  font-weight: bold;
 }
 
 @keyframes App-logo-spin {

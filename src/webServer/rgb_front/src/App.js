@@ -1,11 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 
+// socket
 import io from 'socket.io-client';
+
+// components
 import AudioVisualiser from "./component/AudioVisualiser";
 import BrightnessBar from './component/BrightnessBar';
 import WaveFileUpload from './component/WaveFileUpload'
+
+// pages 
+import LedOffPage from './pages/LedOffPage'
+import DisplayTimePage from './pages/DisplayTimePage'
+import AudioVisualiserPage from './pages/AudioVisualiserPage'
+
+// functions
+import {createNewboard} from './functions/board';
+
+const LED_Mode = {
+  0 : "LED OFF",
+  1 : "Current Time",
+  2 : "Audio Visualiser",
+};
 
 
 const socket = io('http://192.168.7.2:8080');
@@ -14,6 +31,10 @@ function App() {
   const [messages, setMessage] = useState("");
   const [spectrum, setSpectrum] = useState([]);
   const [brightness, setBrightness] = useState([]);
+  const [board, setBoard] = useState([]);
+  const [timeBoard, setTimeBoard] = useState([]);
+  const [screen, setScreen] = useState([]);
+  const [mode, setMode] = useState("Do you guys not have phone?");
 
   // set the message state when it received a message from bbg
   useEffect(() => {
@@ -23,20 +44,20 @@ function App() {
     })
   },[])
 
-  //send getSpectrum to bbg
+  //initial board
   useEffect(()=>{
-    const getSpectrumInterval = setInterval(()=>{
-      sendMessage("getSpectrum\n");
-    }, 100)
-    return () => clearInterval(getSpectrumInterval);
-  },[])
+    let newBoard = createNewboard();
+    setBoard(newBoard);
+    setTimeBoard(newBoard);
+  }, [])
 
-  //send getBrightness to bbg
+
+  //send getMode to bbg
   useEffect(()=>{
-    const getBrightnessInterval = setInterval(()=>{
-      sendMessage("getBrightness\n");
+    const Interval = setInterval(()=>{
+      sendMessage("getMode");
     }, 1000)
-    return () => clearInterval(getBrightnessInterval);
+    return () => clearInterval(Interval);
   },[])
 
   useEffect(()=>{
@@ -53,9 +74,24 @@ function App() {
       }catch(error){
         console.log(error);
       }
-    } else if (cmd[0] === "brightness") {
+    }
+    else if (cmd[0] === "brightness") {
       try {
         setBrightness(cmd[1]);
+      } catch(error) {
+        console.log(error);
+      }
+    }
+    else if (cmd[0] === "mode") {
+      try {
+        setMode(cmd[1]);
+      } catch(error) {
+        console.log(error);
+      }
+    }
+    else if (cmd[0] === "screen") {
+      try {
+        setScreen(JSON.parse(cmd[1]));
       } catch(error) {
         console.log(error);
       }
@@ -73,12 +109,36 @@ function App() {
     <div className="App">
       <header className="App-header">
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
+        <p class = "titleText">TEAM <span style = {{ color: 'red' }}>R</span><span style = {{ color: 'green'}}>G</span><span style = {{ color: 'blue' }}>B</span></p>
 
-        <h1>UDP Messages</h1>
+        <div style={{ display: 'flex' , width: '80%', justifyContent: "center", alignItems: "center"}}>
+          <div style={{ flex: 1, alignItems: "flex-end"}}>
+            <button class = "custom-button" onClick={() => sendMessage("setPreviousMode")}> {"<"} </button>
+          </div>
+          <div style={{flex: 0.8}}>
+            <p class = "modeText">{LED_Mode[mode]}</p>
+          </div>
+          <div style={{ flex: 1, alignItems: "flex-start"}}>
+            <button class = "custom-button" onClick={() => sendMessage("setNextMode")}> {">"} </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="App-main">
         {/*<p style={{display: "inline", margin: 0, padding: 0 }}>{messages}</p>*/}
+        {
+          mode === "0" ? (<LedOffPage/>) : 
+          mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage}/>) : 
+          mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard} brightness = {brightness} sendMessage = {sendMessage}/>):
+          <div></div>
+        }
+        {/* 
+        <div>
+          <AudioVisualiser spectrum = {spectrum} board = {board} setBoard = {setBoard} canvasRef ={canvasRef}/>
+        </div>
 
         <div>
-          <AudioVisualiser spectrum = {spectrum}/>
+            <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
         </div>
 
         <div>
@@ -86,10 +146,16 @@ function App() {
         </div>
         <div style={{width:"60%", margin: "1% 2% 1% 2%"}}>
           <WaveFileUpload />
-        </div>
+        </div> */}
 
-        <button onClick={() => sendMessage("help")}> click me for help!</button>
-      </header>
+        {/* <button onClick={() => sendMessage("setNextMode")}> click me to change mode!</button> */}
+
+
+      </div>
+
+
+
+      
     </div>
   );
 }

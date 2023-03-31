@@ -29,15 +29,20 @@ int main(void)
     }
 
     // Blocking call here until shutdown procedure initiated by UDP or joystick
-    startMicDetection();
+    
     joystickstart();
 
     LED_init(LED_LISTEN);
     AudioMixer_init();
     startBeatController();
     UDP_init();
+
+    startMicDetection();
+    stopMicDectection();
+
     UDP_cleanup();
     clearBeatController();
     AudioMixer_cleanup();
     LED_wait();
+    
 }
