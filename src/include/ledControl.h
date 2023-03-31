@@ -32,7 +32,17 @@ void LED_cleanup(void);
 void LED_wait(void);
 
 // Sets the mode of the LED panel for what to display.
-void LED_setMode(LED_Mode mode);
+void LED_setMode(int mode);
+
+// Sets next mode of the LED panel for what to display.
+void LED_nextMode();
+void LED_PreviousMode();
+
+// Get the mode of the LED panel for what to display.
+LED_Mode LED_getMode();
+
+// Get the current Screen
+int (*getScreen())[16];
 
 // Based on a spectrum, sends a 16x32 matrix to the Adafruit board
 void LED_projectSpectrum();

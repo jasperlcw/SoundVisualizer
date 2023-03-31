@@ -376,10 +376,41 @@ void LED_wait(void)
     sem_wait(&ledSem);
 }
 
-void LED_setMode(LED_Mode mode)
+void LED_setMode(int mode)
 {
+    printf("%d \n", mode);
+    if(mode > 2){
+        mode = 0;
+    }
+    if(mode == -1){
+        mode = 2;
+    }
     currentMode = mode;
 }
+
+void LED_nextMode()
+{
+    // get the next mode
+    currentMode++;
+    LED_setMode(currentMode);
+}
+
+void LED_PreviousMode(){
+    // get the previous mode
+    currentMode--;
+    LED_setMode(currentMode);
+}
+
+int (*getScreen())[16]{
+    return screen;
+}
+
+LED_Mode LED_getMode()
+{
+    return currentMode;
+}
+
+
 
 void LED_setDisplay(const int row, const int col, const int matrix[row][col])
 {

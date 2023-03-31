@@ -45,6 +45,36 @@ char* doubleArrayToJson(double* array, int size, char* key){
     return tempJson;
 }
 
+char* Int2DArrayToJson(int (*array)[16], int rows, int cols, char* key){
+
+    memset(tempJson, 0, sizeof(char) * 1024);
+
+    char* stringOffset = tempJson;
+    stringOffset+= sprintf(stringOffset, "{\"%s\":[", key);
+
+    for(int i = 0; i < rows; i++){
+        stringOffset += sprintf(stringOffset, "[");
+
+        for(int j = 0; j < cols-1; j++){
+            stringOffset += sprintf(stringOffset, "%d,", array[i][j]);
+        }
+
+        stringOffset += sprintf(stringOffset, "%d", array[i][cols-1]);
+
+        if(i == rows-1){
+            stringOffset += sprintf(stringOffset, "]");
+        } else {
+            stringOffset += sprintf(stringOffset, "],");
+        }
+    }
+
+    stringOffset += sprintf(stringOffset, "]}");
+
+    return tempJson;
+}
+
+
+
 void* StartUDPServer(){
     // Address
     struct sockaddr_in sin;
@@ -135,7 +165,7 @@ void* StartUDPServer(){
             }
         }
         //get Spectrum
-        else if(strcmp(cmd[0], "getSpectrum\n") == 0){
+        else if(strcmp(cmd[0], "getSpectrum") == 0){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
             LED_projectSpectrum();
@@ -144,7 +174,7 @@ void* StartUDPServer(){
             sprintf(messageTx, "spectrum %s", tempJson);
         }
         //get Brightness
-        else if(strcmp(cmd[0], "getBrightness\n") == 0){
+        else if(strcmp(cmd[0], "getBrightness") == 0){
             int brightnessPercent = Potentiometer_getReading();
             sprintf(messageTx, "brightness %d", brightnessPercent);
         }
@@ -154,6 +184,34 @@ void* StartUDPServer(){
             initialUploadWave();
         }
 
+        //get current running mode
+        else if(strcmp(cmd[0], "getMode") == 0){
+            sprintf(messageTx, "mode %d", LED_getMode());
+        }
+
+        //set current running mode
+        else if(strcmp(cmd[0], "setMode") == 0){
+            LED_setMode(atoi(cmd[1]));
+            sprintf(messageTx, "200");
+        }
+        //set +1 to current running mode
+        else if(strcmp(cmd[0], "setNextMode") == 0){
+            LED_nextMode();
+            sprintf(messageTx, "200");
+        }
+        //set -1 to current running mode
+        else if(strcmp(cmd[0], "setPreviousMode") == 0){
+            LED_PreviousMode();
+            sprintf(messageTx, "200");
+        }
+
+        //press the screen
+        else if(strcmp(cmd[0], "getScreen") == 0){
+            int (*screen)[16] = getScreen();
+            Int2DArrayToJson(screen, 32, 16, "value");
+            sprintf(messageTx, "screen %s", tempJson);
+        }
+        
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
             // Transmit a reply:

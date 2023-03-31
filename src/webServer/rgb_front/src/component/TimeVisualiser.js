@@ -1,9 +1,9 @@
 
 import { useEffect} from 'react';
 import './AudioVisualStyle.css';
-import {setBoardWithSpectrum} from '../functions/board'
+import {setBoardWithScreen} from '../functions/board'
 
-const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
+const TimeVisualiser = ({board, setBoard, screen, canvasRef}) => {
 
     let newBoard = [];
     const canvasHeight = 400;
@@ -11,19 +11,20 @@ const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
     const pixelDiameter = canvasHeight / maxBarHeight;
 
     useEffect(() =>{
-        const spectrumValues = spectrum.value;
+        let currentScreen = screen.value;
+        console.log(currentScreen);
         newBoard = board;
-        // no spectrum received
-        if(spectrumValues){
-            newBoard = setBoardWithSpectrum(newBoard, spectrumValues);
+
+        if(currentScreen){
+            newBoard = setBoardWithScreen(board, currentScreen)
         }
-        drawCanvasWithAudioSpectrum();
+        drawCanvas();
         setBoard(newBoard);
-    },[spectrum])
+    },[screen])
 
 
-    const drawCanvasWithAudioSpectrum = () =>{
-        // draw the Audio Visualiser with bars
+    const drawCanvas = () =>{
+        // draw the Time Visualiser
         // In pixels
 
         const canvas = canvasRef.current;
@@ -43,10 +44,14 @@ const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
                     0,
                     2 * Math.PI
                 );
-                if(newBoard[column][row].active)
-                    ctx.fillStyle = newBoard[column][row].color
-                else
+
+                if(newBoard[column][row].active){
+                    ctx.fillStyle = newBoard[column][row].color;
+                }
+                else{
                     ctx.fillStyle = `rgb(${50}, ${50}, ${50})`;
+                }
+                
                 ctx.fill(); 
             }
         }
@@ -59,4 +64,4 @@ const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
     );
 }
 
-export default AudioVisualiser;
+export default TimeVisualiser;
