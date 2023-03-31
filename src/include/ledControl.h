@@ -34,9 +34,6 @@ void LED_wait(void);
 // Sets the mode of the LED panel for what to display.
 void LED_setMode(LED_Mode mode);
 
-// Based on a spectrum, sends a 16x32 matrix to the Adafruit board
-void LED_projectSpectrum();
-
 // Changes the colors displayed by the LED panel, where the passed in matrix
 // should be a size of 16x32 containing values of the defined constants in this module.
 // Note that the program will ignore inputs if the mode is set to CLOCK.
