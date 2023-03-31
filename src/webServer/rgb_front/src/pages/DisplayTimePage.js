@@ -20,7 +20,7 @@ const DisplayTimePage = ({timeBoard, setTimeBoard, screen, sendMessage}) => {
     useEffect(()=>{
         const Interval = setInterval(()=>{
         sendMessage("getScreen");
-        }, 100)
+        }, 1000)
         return () => clearInterval(Interval);
     },[])
 

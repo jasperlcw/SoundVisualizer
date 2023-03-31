@@ -36,8 +36,10 @@ int main(void)
     AudioMixer_init();
     startBeatController();
     UDP_init();
+
     UDP_cleanup();
     clearBeatController();
     AudioMixer_cleanup();
     LED_wait();
+    stopMicDectection();
 }

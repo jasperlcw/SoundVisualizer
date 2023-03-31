@@ -188,6 +188,8 @@ void* StartUDPServer(){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
 
+            displayMatrixOnLed(16, 32, spectrum);
+
             doubleArrayToJson(spectrum, spectrumSize, "value");
             sprintf(messageTx, "spectrum %s", tempJson);
         }
@@ -226,12 +228,12 @@ void* StartUDPServer(){
             sprintf(messageTx, "200");
         }
 
-        //press the screen
-        else if(strcmp(cmd[0], "getScreen") == 0){
-            int (*screen)[16] = getScreen();
-            Int2DArrayToJson(screen, 32, 16, "value");
-            sprintf(messageTx, "screen %s", tempJson);
-        }
+        // //press the screen
+        // else if(strcmp(cmd[0], "getScreen") == 0){
+        //     int (*screen)[16] = getScreen();
+        //     Int2DArrayToJson(screen, 32, 16, "value");
+        //     sprintf(messageTx, "screen %s", tempJson);
+        // }
         
         else{
             sprintf(messageTx, "Unknown command. Type 'help' for command list.\n");
@@ -294,7 +296,7 @@ static void displayMatrixOnLed(int row, int col, double *matrix)
             }
             currentIndex++;
         }
-        LED_setDisplay(row, col, ledMatrix);
+        // LED_setDisplay(row, col, ledMatrix);
     }
     LED_setDisplay(row, col, ledMatrix);
 }

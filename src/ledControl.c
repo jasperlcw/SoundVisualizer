@@ -390,9 +390,23 @@ void LED_PreviousMode(){
     LED_setMode(currentMode);
 }
 
+static int copy[32][16];
 int (*getScreen())[16]{
-    return screen;
+    pthread_mutex_lock(&ledScreenMutex);
+    // Create a new 2D array and copy the contents of the screen variable
+
+    for (int i = 0; i < 32; i++) {
+        for (int j = 0; j < 16; j++) {
+            copy[i][j] = screen[i][j];
+        }
+    }
+    // Unlock the mutex after accessing the screen variable
+    pthread_mutex_unlock(&ledScreenMutex);
+    // Lock the mutex before accessing the screen variable
+    return copy;
 }
+
+
 
 LED_Mode LED_getMode()
 {
@@ -449,6 +463,8 @@ static void updateClockDisplay(void)
     int **fourthDigitMatrix = LEDMap_getNumberDisplay(minuteSecondDigit);
 
     const int colStartPositions[4] = {3, 9, 17, 23};
+
+    LED_clearDisplay();
 
     pthread_mutex_lock(&ledScreenMutex);
     {
@@ -508,9 +524,6 @@ static void* ledThread(void *vargp)
         }
         else if (currentMode == LED_CLOCK) {
             updateClockDisplay();
-        }
-        else if(currentMode == LED_LISTEN){
-            LED_projectSpectrum();
         }
         // Display the matrix
         ledMatrix_refresh();
