@@ -39,7 +39,7 @@
 #define S_IWRITE "S_IWUSR"
 
 /* TIMING */
-#define DELAY_IN_US 5
+#define DELAY_IN_US 100
 #define DELAY_IN_SEC 0
 
 // Number Pixel Size
@@ -547,7 +547,7 @@ static void* ledThread(void *vargp)
         }
         // Display the matrix
         ledMatrix_refresh();
-        sleepForMs(10);
+        sleepForMs(20);
     }
     return 0;
 }
