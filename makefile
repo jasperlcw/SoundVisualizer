@@ -21,7 +21,6 @@ c_app:
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET) $(LFLAGS) -lpthread -lasound -lfftw3 -lm
 	
 scripts:
-	sudo chmod 755 ./finalProjectStart*.sh
 	cp ./finalProjectStart*.sh $(PUBDIR) 
 
 fftw3:
@@ -42,3 +41,6 @@ node:
 
 react:
 	cd $(PUBDIR)/final-server-copy/rgb_front && sudo npm run build
+	
+testLed:
+	make -C ./src/testLED

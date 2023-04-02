@@ -3,6 +3,7 @@
 // Note: Generates low latency audio on BeagleBone Black; higher latency found on host.
 #include "audioMixer_template.h"
 #include "../clap/mic.h"
+#include "../Utility.h"
 #include <alsa/asoundlib.h>
 #include <stdbool.h>
 #include <pthread.h>
@@ -294,6 +295,27 @@ static void fillPlaybackBuffer(short *buff, int size)
 
 void* playbackThread(void* arg)
 {   
+    struct sched_param sch_params;
+    sch_params.sched_priority = SCHED_FIFO;
+    int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sch_params);
+    if (ret == EPERM) {
+        perror("Permission error for elevating priority of audio thread");
+    }
+    else if (ret != 0) {
+        perror("Error elevating priority of audio thread");
+    }
+
+    // int policy = 0;
+    // if (pthread_getschedparam(pthread_self(), &policy, &sch_params) != 0) {
+    //     puts("Error when checking priority level of audio thread.");
+    // }
+    // if (policy != SCHED_FIFO) {
+    //     puts("Priority level of the thread is not actually SCHED_FIFO (1) even after changing.");
+    //     printf("Actual priority level: %d\n", sch_params.sched_priority);
+    // }
+
+    puts("Audio playback thread is now running.");
+
     while (isRunning) {
         // Generate next block of audio
         fillPlaybackBuffer(playbackBuffer, playbackBufferSize);
@@ -317,6 +339,8 @@ void* playbackThread(void* arg)
             printf("Short write (expected %li, wrote %li)\n",
                    playbackBufferSize, frames);
         }
+
+        sleepForMs(10);
     }
 
     return NULL;
