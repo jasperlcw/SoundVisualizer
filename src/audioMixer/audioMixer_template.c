@@ -305,14 +305,14 @@ void* playbackThread(void* arg)
         perror("Error elevating priority of audio thread");
     }
 
-    int policy = 0;
-    if (pthread_getschedparam(pthread_self(), &policy, &sch_params) != 0) {
-        puts("Error when checking priority level of audio thread.");
-    }
-    if (policy != SCHED_FIFO) {
-        puts("Priority level of the thread is not actually SCHED_FIFO (1) even after changing.");
-        printf("Actual priority level: %d\n", sch_params.sched_priority);
-    }
+    // int policy = 0;
+    // if (pthread_getschedparam(pthread_self(), &policy, &sch_params) != 0) {
+    //     puts("Error when checking priority level of audio thread.");
+    // }
+    // if (policy != SCHED_FIFO) {
+    //     puts("Priority level of the thread is not actually SCHED_FIFO (1) even after changing.");
+    //     printf("Actual priority level: %d\n", sch_params.sched_priority);
+    // }
 
     puts("Audio playback thread is now running.");
 
@@ -340,7 +340,7 @@ void* playbackThread(void* arg)
                    playbackBufferSize, frames);
         }
 
-        sleepForMs(5);
+        sleepForMs(10);
     }
 
     return NULL;

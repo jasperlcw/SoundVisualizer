@@ -21,7 +21,6 @@ c_app:
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET) $(LFLAGS) -lpthread -lasound -lfftw3 -lm
 	
 scripts:
-	sudo chmod 755 ./finalProjectStart*.sh
 	cp ./finalProjectStart*.sh $(PUBDIR) 
 
 fftw3:

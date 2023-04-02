@@ -39,7 +39,7 @@
 #define S_IWRITE "S_IWUSR"
 
 /* TIMING */
-#define DELAY_IN_US 100
+#define DELAY_IN_US 1500000
 #define DELAY_IN_SEC 0
 
 // Number Pixel Size
@@ -521,14 +521,14 @@ static void* ledThread(void *vargp)
         perror("Error elevating priority of LED driving thread");
     }
 
-    int policy = 0;
-    if (pthread_getschedparam(pthread_self(), &policy, &sch_params) != 0) {
-        puts("Error when checking priority level of LED thread.");
-    }
-    if (policy != SCHED_FIFO) {
-        puts("Priority level of the thread is not actually SCHED_FIFO (1) even after changing.");
-        printf("Actual priority level: %d\n", sch_params.sched_priority);
-    }
+    // int policy = 0;
+    // if (pthread_getschedparam(pthread_self(), &policy, &sch_params) != 0) {
+    //     puts("Error when checking priority level of LED thread.");
+    // }
+    // if (policy != SCHED_FIFO) {
+    //     puts("Priority level of the thread is not actually SCHED_FIFO (1) even after changing.");
+    //     printf("Actual priority level: %d\n", sch_params.sched_priority);
+    // }
 
     // Reset the screen
     memset(screen, 0, sizeof(screen));
@@ -547,7 +547,7 @@ static void* ledThread(void *vargp)
         }
         // Display the matrix
         ledMatrix_refresh();
-        sleepForMs(20);
+        sleepForMs(5);
     }
     return 0;
 }
