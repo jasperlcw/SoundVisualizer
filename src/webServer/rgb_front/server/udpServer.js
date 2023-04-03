@@ -7,8 +7,10 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const path = require("path");
 
+let currentSenderIp = "";
+
 // dir to music upload
-const saveToDir = path.join(__dirname, "../../../", "final-wav-files");
+const saveToDir = path.join("/tmp/final-wav-files");
 console.log(saveToDir)
 if (!fs.existsSync(saveToDir)) {
     fs.mkdirSync(saveToDir);
@@ -29,13 +31,16 @@ udpServer.on('error', (err) => {
 })
 udpServer.on('message', (msg, info) =>{
     console.log(`received: ${msg} from BBG: ${info.address}:${info.port}`);
+    clearInterval(errorInterval);
+    errorInterval = null;
+    errorTimer = 0;
+    
     socket.emit('message', msg.toString());
 
     messageCount++;
     console.log(`message Count: ${messageCount}`);
 
 })
-
 udpServer.on('listening', () => {
     console.log(`UDP server listening on port ${12346}`);
 })
@@ -45,6 +50,7 @@ udpServer.on('listening', () => {
 const app = express();
 
 app.use(bodyParser.raw({ limit: '50mb', type: 'audio/wav' }));
+app.use(bodyParser.json());
 
 app.use(cors());
 
@@ -64,16 +70,32 @@ app.post('/upload',(req, res) => {
     console.log(req.body)
     uploadingFile(req.body).then(()=>{
         const message = Buffer.from("setMusic", 'utf8');
-        udpServer.send(message, 0, message.length, bbgPort, '192.168.7.2', (error) => {
+        udpServer.send(message, 0, message.length, bbgPort, 'localhost', (error) => {
                 if (error) {
                     console.log("unable to send message: ", message);
                 } else {
+                    currentSenderIp = req.ip;
                     res.sendStatus(200);
                     console.log("uploaded file");
                 }
             }
         )
     })
+})
+
+//listen to message
+app.post('/message',(req, res) => {
+    const message = req.body.data;
+    udpServer.send(message, 0, message.length, bbgPort, 'localhost', (error) => {
+            if (error) {
+                console.log("unable to send message: ", message);
+            } else {
+                currentSenderIp = req.ip;
+                res.sendStatus(200);
+                console.log("sent: ", req.body.data);
+            }
+        }
+    )
 })
 
 //web server with express//
@@ -94,19 +116,30 @@ socket.on('connection', (client) =>{
     handleMessage(client);
 })
 
-
 let messageCount = 0;
+
+let errorInterval = null;
+let errorTimer = 0;
+
 
 const handleMessage = (client) =>{
     client.on('message', (data) =>{
         // console.log(`Received message from web server: ${data}`);
         const message = Buffer.from(data, 'utf8');
-        udpServer.send(message, 0, message.length, bbgPort, '192.168.7.2',(error) =>{
+        udpServer.send(message, 0, message.length, bbgPort, 'localhost',(error) =>{
                 if(error){
                     console.log("unable to send message: ", message);
                 }
                 else{
                     console.log("sent: ", data);
+                    if(!errorInterval){
+                        errorInterval = setInterval(()=>{
+                            if(errorTimer > 20){
+                                socket.emit('message', "error");
+                            }
+                            errorTimer+=1;
+                        },100)
+                    }
                 }
             }
         )

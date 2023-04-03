@@ -1,39 +1,34 @@
 
 import { useEffect} from 'react';
-import './AudioVisualStyle.css';
 import {setBoardWithSpectrum} from '../functions/board'
 
 const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
 
     
     // In pixels
-
-    const canvasWidth = 800;
-    const canvasHeight = 400;
     const maxBarHeight = 16;
-    const pixelDiameter = canvasHeight / maxBarHeight;
+
 
     useEffect(() =>{
         let newBoard;
-        const spectrumValues = spectrum.value;
+        // console.log(spectrum)
+        const spectrumData = spectrum.data;
         newBoard = board;
         // no spectrum received
-        if(spectrumValues){
-            newBoard = setBoardWithSpectrum(newBoard, spectrumValues);
+        if(spectrumData){
+            newBoard = setBoardWithSpectrum(newBoard, spectrumData.value, spectrumData.color);
         }
         setBoard(newBoard);
+        drawCanvasWithAudioSpectrum();
     },[spectrum])
 
-    useEffect(() => {
-        if(board){
-            drawCanvasWithAudioSpectrum();
-        }
-    },[spectrum])
 
 
     const drawCanvasWithAudioSpectrum = () =>{
         // draw the Audio Visualiser with bars
         // In pixels
+
+        if(Object.keys(board).length === 0) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -42,6 +37,7 @@ const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
 
         ctx.fillStyle = `rgb(${0}, ${0}, ${0})`
         ctx.rect(0, 0, canvas.width, canvas.height);
+        const pixelDiameter = canvas.height / maxBarHeight;
         ctx.fill();
 
         for (let column = 0; column < 32; column++) {
@@ -65,7 +61,6 @@ const AudioVisualiser = ({spectrum, board, setBoard, canvasRef}) => {
 
     return (
         <div>
-            <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
         </div>
     );
 }

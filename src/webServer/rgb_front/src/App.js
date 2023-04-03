@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState, useRef} from 'react';
-
+import axios from 'axios';
 // socket
 import io from 'socket.io-client';
 
@@ -25,7 +25,7 @@ const LED_Mode = {
 };
 
 
-const socket = io('http://192.168.7.2:8080');
+let socket = io('http://192.168.7.2:8080');
 function App() {
 
   const [messages, setMessage] = useState("");
@@ -35,14 +35,36 @@ function App() {
   const [timeBoard, setTimeBoard] = useState([]);
   const [screen, setScreen] = useState([]);
   const [mode, setMode] = useState("Do you guys not have phone?");
+  const [ipAddress, setIpAddress] = useState('http://192.168.7.2:8080');
+  const [confirmIp, setConfirmIp] = useState('');
 
-  // set the message state when it received a message from bbg
+  const [errorTimer, setErrorTimer] = useState(0);
+  const [ErrorInterval, setErrorInterval] = useState(null);
+
+
+  const [errorMessage, setErrorMessage] = useState("Can't connect to Node Js Server");
+
+  const canvasRef = useRef(null);
+
+  // received a message from bbg
   useEffect(() => {
     socket.on('message', (msg) =>{
         setMessage(msg);
-        console.log("setMessage")
     })
-  },[])
+  },[errorMessage, socket, ErrorInterval])
+
+  useEffect(() =>{
+    if(socket){
+      socket.on("disconnect", () => {
+        setErrorMessage("Can't connect to Node JS Server");
+        setMode("-1");
+      });
+      socket.on("connect", () => {
+        setErrorMessage("");
+        console.log(`connected to: ${ipAddress}`)
+      });
+    }
+  },[errorMessage, socket])
 
   //initial board
   useEffect(()=>{
@@ -58,11 +80,17 @@ function App() {
       sendMessage("getMode");
     }, 1000)
     return () => clearInterval(Interval);
-  },[])
+  },[errorMessage, socket, ErrorInterval])
 
   useEffect(()=>{
     setNewCommend();
   },[messages])
+
+    //send a message to bbg
+  const sendMessage = (cmd) => {
+      // const response = socket.emit('connection', "testConn")
+    socket.emit('message', cmd);
+  }
 
   // determine what commands base on response
   const setNewCommend = () => {
@@ -71,6 +99,7 @@ function App() {
     if (cmd[0] === "spectrum"){
       try{
         setSpectrum(JSON.parse(cmd[1]));
+        setErrorMessage("");
       }catch(error){
         console.log(error);
       }
@@ -78,6 +107,7 @@ function App() {
     else if (cmd[0] === "brightness") {
       try {
         setBrightness(cmd[1]);
+        setErrorMessage("");
       } catch(error) {
         console.log(error);
       }
@@ -85,6 +115,7 @@ function App() {
     else if (cmd[0] === "mode") {
       try {
         setMode(cmd[1]);
+        setErrorMessage("");
       } catch(error) {
         console.log(error);
       }
@@ -92,70 +123,69 @@ function App() {
     else if (cmd[0] === "screen") {
       try {
         setScreen(JSON.parse(cmd[1]));
+        setErrorMessage("");
+      } catch(error) {
+        console.log(error);
+      }
+    }
+    else if (cmd[0] === "error") {
+      try {
+        setErrorMessage("can't connect to BBG Server");
       } catch(error) {
         console.log(error);
       }
     }
   }
 
-  //send a message to bbg
-  const sendMessage = (cmd) => {
-    // const response = socket.emit('connection', "testConn");
-    const response = socket.emit('message', cmd);
-    // console.log(response2);
+  //update IP
+  const updateServerIp = () =>{
+
+    if(socket){
+      socket.disconnect();
+    }
+    socket = io(ipAddress);
+    setConfirmIp(ipAddress);
   }
+
+  const handleIpChange = (e) =>{
+    setIpAddress(e.target.value);
+  }
+
 
   return (
     <div className="App">
       <header className="App-header">
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
-        <p class = "titleText">TEAM <span style = {{ color: 'red' }}>R</span><span style = {{ color: 'green'}}>G</span><span style = {{ color: 'blue' }}>B</span></p>
-
-        <div style={{ display: 'flex' , width: '80%', justifyContent: "center", alignItems: "center"}}>
-          <div style={{ flex: 1, alignItems: "flex-end"}}>
-            <button class = "custom-button" onClick={() => sendMessage("setPreviousMode")}> {"<"} </button>
-          </div>
-          <div style={{flex: 0.8}}>
-            <p class = "modeText">{LED_Mode[mode]}</p>
-          </div>
-          <div style={{ flex: 1, alignItems: "flex-start"}}>
-            <button class = "custom-button" onClick={() => sendMessage("setNextMode")}> {">"} </button>
-          </div>
-        </div>
+        <p className = "titleText">TEAM <span style = {{ color: 'red' }}>R</span><span style = {{ color: 'green'}}>G</span><span style = {{ color: 'blue' }}>B</span></p>
       </header>
 
       <div className="App-main">
-        {/*<p style={{display: "inline", margin: 0, padding: 0 }}>{messages}</p>*/}
+        <div style={{ display: 'flex' , width: '80%', justifyContent: "center", alignItems: "center", marginTop:"5%"}}>
+          <div style={{ flex: 1, alignItems: "flex-end"}}>
+            <button className = "custom-button" onClick={() => sendMessage("setPreviousMode")}> {"<"} </button>
+          </div>
+          <div style={{flex: 0.8}}>
+            <p className = "modeText">{LED_Mode[mode]}</p>
+          </div>
+          <div style={{ flex: 1, alignItems: "flex-start"}}>
+            <button className = "custom-button" onClick={() => sendMessage("setNextMode")}> {">"} </button>
+          </div>
+        </div>
+
+        <div>
+            <h1 style={{color:'red'}}>{errorMessage}</h1>
+        </div>
         {
           mode === "0" ? (<LedOffPage/>) : 
-          mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage}/>) : 
-          mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard} brightness = {brightness} sendMessage = {sendMessage}/>):
-          <div></div>
+          mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage} canvasRef = {canvasRef}/>) : 
+          mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard} brightness = {brightness} sendMessage = {sendMessage} canvasRef = {canvasRef}/>):
+          <div>
+            <h1> Connection To BBG manually </h1>
+            <input className ="modeText" type = "text" value = {ipAddress} onChange = {handleIpChange}></input>
+            <button className="modeText" style={{marginTop:"1%"}} onClick = {updateServerIp}>Connect</button>
+          </div>
         }
-        {/* 
-        <div>
-          <AudioVisualiser spectrum = {spectrum} board = {board} setBoard = {setBoard} canvasRef ={canvasRef}/>
-        </div>
-
-        <div>
-            <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
-        </div>
-
-        <div>
-          <BrightnessBar brightness = {brightness}/>
-        </div>
-        <div style={{width:"60%", margin: "1% 2% 1% 2%"}}>
-          <WaveFileUpload />
-        </div> */}
-
-        {/* <button onClick={() => sendMessage("setNextMode")}> click me to change mode!</button> */}
-
-
       </div>
-
-
-
-      
     </div>
   );
 }

@@ -488,7 +488,7 @@ void* generateSpectrum(){
         //    printf("%d: %f ", i, spectrum[i] * 1000);
         //}
         //printf("\n");
-        //sleepForMs(100);
+        sleepForMs(10);
     }
 
     return NULL;

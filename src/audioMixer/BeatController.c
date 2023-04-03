@@ -20,13 +20,13 @@ void* startBeat(){
     runCommand("config-pin p9_18 i2c");
     runCommand("config-pin p9_17 i2c");
 
-    // Load wave file we want to play:
-    wavedata_t testFile;
-    AudioMixer_readWaveFileIntoMemory(FREQ_TESTER, &testFile);
+    // // Load wave file we want to play:
+    // wavedata_t testFile;
+    // AudioMixer_readWaveFileIntoMemory(FREQ_TESTER, &testFile);
 
     beatSetting = 0;
 
-    presetSound[0] = testFile;
+    // presetSound[0] = testFile;
     // presetSound[1] = drum_bd_hard;
     // presetSound[2] = drum_cc;
     // presetSound[3] = drum_snare_soft;
