@@ -22,7 +22,7 @@ extern wavedata_t presetSound[MAX_SOUND_SET];
 #define DRUM_CC DIR_PREFIX "final-wav-files/100053__menegass__gui-drum-cc.wav"
 #define DRUM_SNARE_SOFT DIR_PREFIX "final-wav-files/100059__menegass__gui-drum-snare-soft.wav"
 
-#define UPLOADED_WAVE_FILE DIR_PREFIX "final-wav-files/uploaded.wav"
+#define UPLOADED_WAVE_FILE "/tmp/final-wav-files/uploaded.wav"
 
 
 //thread

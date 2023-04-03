@@ -10,15 +10,8 @@ import WaveFileUpload from '../component/WaveFileUpload'
 // functions
 import {createNewboard} from '../functions/board';
 
-// In pixels
-const canvasHeight = 400;
-const canvasWidth = 800;
 
-
-
-const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage}) => {
-
-    const canvasRef = useRef(null);
+const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef}) => {
 
     //send getSpectrum to bbg
     useEffect(()=>{
@@ -48,9 +41,9 @@ const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage
                 <AudioVisualiser spectrum = {spectrum} board = {board} setBoard = {setBoard} canvasRef ={canvasRef}/>
             </div>
 
-            {/* <div>
-                <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
-            </div> */}
+            <div className = "audioContainer">
+                <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={1000} height={500}/>
+            </div>
 
             <div>
                 <BrightnessBar brightness = {brightness}/>

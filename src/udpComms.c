@@ -64,6 +64,28 @@ char* doubleArrayToJson(double* array, int size, char* key){
     return tempJson;
 }
 
+char* doubleArrayToJsonWithColor(double* array, int size, char* key, LED_Mode mode){
+
+    memset(tempJson, 0, sizeof(char) * 1000);
+
+    char* stringOffset = tempJson;
+    stringOffset+= sprintf(stringOffset, "{\"data\":");
+
+    stringOffset+= sprintf(stringOffset, "{\"%s\":[", key);
+
+    for(int i = 0; i < size-1; i++){
+        stringOffset += sprintf(stringOffset, "%0.3f,", array[i]);
+    }
+
+    stringOffset += sprintf(stringOffset, "%0.3f", array[size-1]);
+
+    stringOffset += sprintf(stringOffset, "],\"%s\":%d}", "color", mode);
+
+    stringOffset+= sprintf(stringOffset, "}");
+
+    return tempJson;
+}
+
 char* Int2DArrayToJson(int (*array)[16], int rows, int cols, char* key){
 
     memset(tempJson, 0, sizeof(char) * 1024);
@@ -187,10 +209,10 @@ void* StartUDPServer(){
         else if(strcmp(cmd[0], "getSpectrum") == 0){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
+            int color = potentiometerToColour();
 
             displayMatrixOnLed(16, 32, spectrum);
-
-            doubleArrayToJson(spectrum, spectrumSize, "value");
+            doubleArrayToJsonWithColor(spectrum, spectrumSize, "value", color);
             sprintf(messageTx, "spectrum %s", tempJson);
         }
         //get Brightness
@@ -252,7 +274,7 @@ void* StartUDPServer(){
     return 0;
 }
 
-static int potentiometerToColour()
+int potentiometerToColour()
 {
     // We have 8 LED settings, and a reading of 0 - 99
     double partition = 100 / 8;

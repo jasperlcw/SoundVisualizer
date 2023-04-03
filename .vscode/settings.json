@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "ledcontrol.h": "c",
+        "joystickcontrols.h": "c"
+    }
+}
