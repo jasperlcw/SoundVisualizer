@@ -8,6 +8,7 @@
 #include "mic.h"
 #include "circlebuffer.h"
 #include "../Utility.h"
+#include "../include/ledControl.h"
 
 
 double threshold = 50;
@@ -40,6 +41,8 @@ static void* dectectClap(){
     clock_t before;
     clock_t difference;
     int timedurationmsec;
+    int mode;
+    int prevmode = 1;
     while(run){
 
         if(!clapFeature){
@@ -64,6 +67,14 @@ static void* dectectClap(){
                 else{
                     clap1 = false;
                     printf("clap2,%f,%f,%f,%f\n",shortavg, longavg,threshold, upperthreshold   );
+                    mode = LED_getMode();
+                    if(mode == 0){
+                        LED_setMode(prevmode);
+                    }
+                    else{
+                        prevmode = mode;
+                         LED_setMode(mode);
+                    }
                     pthread_mutex_lock(&lock);
                     clap = true;
                     pthread_mutex_unlock(&lock);    
