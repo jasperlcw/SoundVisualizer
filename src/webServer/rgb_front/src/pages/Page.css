@@ -2,6 +2,8 @@
 
 .page-header {
   max-height: 100vh;
+  min-height: 20vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,6 +12,18 @@
   color: white;
 }
 
+.audioContainer {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background-color: #282c34;
+
+}
+
+.uploadText {
+  font-size: 1.5em;
+
+}
 
 .App-link {
   color: #61dafb;
@@ -18,4 +32,13 @@
 h1{
   font-size: xx-large;
 }
+
+.audioCanvas {
+  display: block;
+  margin: 0 auto;
+  height: auto;
+  width: auto;
+  background-color: white ;
+}
+
 

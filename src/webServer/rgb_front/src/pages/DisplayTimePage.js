@@ -12,10 +12,7 @@ const canvasHeight = 400;
 const canvasWidth = 800;
 
 
-const DisplayTimePage = ({timeBoard, setTimeBoard, screen, sendMessage}) => {
-
-    const canvasRef = useRef(null);
-
+const DisplayTimePage = ({timeBoard, setTimeBoard, screen, sendMessage, canvasRef}) => {
       //send getScreen to bbg
     useEffect(()=>{
         const Interval = setInterval(()=>{
@@ -36,9 +33,10 @@ const DisplayTimePage = ({timeBoard, setTimeBoard, screen, sendMessage}) => {
             <div>
                 <TimeVisualiser timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} canvasRef ={canvasRef}/>
             </div>
-            {/* <div>
-                <canvas ref = {canvasRef} id="Time" className="TimeCanvas" width={canvasWidth} height={canvasHeight}/>
-            </div> */}
+            
+            <div className = "audioContainer">
+                <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={1000} height={500}/>
+            </div>
 
         </div>
     )

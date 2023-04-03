@@ -8,7 +8,7 @@ const WaveFileUpload = () => {
     const [uploadText, setUploadText] = useState("upload a file");
 
     const handleFileChange = (event) =>{
-        setUploadText("upload a file");
+        setUploadText("please upload a file");
         setWaveFile(event.target.files[0]);
     }
 
@@ -41,9 +41,15 @@ const WaveFileUpload = () => {
 
     return (
         <div>
-            <input type="file" accept="audio/wav" onChange={handleFileChange}/>
-            <button onClick={sendWaveFile} disabled={!uploadComplete}>Upload</button>
-            <span style={{marginLeft: "1%"}}>{uploadText}</span>
+            <div style={{display:"flex", alignItems: "center", justifyContent: "center"}}>
+                <input className = "uploadText" type="file" accept="audio/wav" onChange={handleFileChange}/>
+                <button className = "uploadText" onClick={sendWaveFile} disabled={!uploadComplete}>Upload</button>
+            </div>
+
+            <div>
+                <p className = "uploadText" style={{margin: "1%"}}>{uploadText}</p>
+            </div>
+
         </div>
     )
 }
