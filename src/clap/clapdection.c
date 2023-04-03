@@ -73,7 +73,7 @@ static void* dectectClap(){
                     }
                     else{
                         prevmode = mode;
-                         LED_setMode(mode);
+                         LED_setMode(0);
                     }
                     pthread_mutex_lock(&lock);
                     clap = true;
