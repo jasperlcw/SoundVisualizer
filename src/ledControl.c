@@ -458,10 +458,19 @@ static void updateClockDisplay(void)
     int minuteFirstDigit = currentMinute / 10;
     int minuteSecondDigit = currentMinute % 10;
 
-    int **firstDigitMatrix = LEDMap_getNumberDisplay(hourFirstDigit);
-    int **secondDigitMatrix = LEDMap_getNumberDisplay(hourSecondDigit);
-    int **thirdDigitMatrix = LEDMap_getNumberDisplay(minuteFirstDigit);
-    int **fourthDigitMatrix = LEDMap_getNumberDisplay(minuteSecondDigit);
+    // int **firstDigitMatrix = LEDMap_getNumberDisplay(hourFirstDigit);
+    // int **secondDigitMatrix = LEDMap_getNumberDisplay(hourSecondDigit);
+    // int **thirdDigitMatrix = LEDMap_getNumberDisplay(minuteFirstDigit);
+    // int **fourthDigitMatrix = LEDMap_getNumberDisplay(minuteSecondDigit);
+    int firstDigitMatrix[LED_TIME_ROW][LED_TIME_COL] = {0};
+    int secondDigitMatrix[LED_TIME_ROW][LED_TIME_COL] = {0};
+    int thirdDigitMatrix[LED_TIME_ROW][LED_TIME_COL] = {0};
+    int fourthDigitMatrix[LED_TIME_ROW][LED_TIME_COL] = {0};
+
+    LEDMap_getNumberDisplay(hourFirstDigit, firstDigitMatrix);
+    LEDMap_getNumberDisplay(hourSecondDigit, secondDigitMatrix);
+    LEDMap_getNumberDisplay(minuteFirstDigit, thirdDigitMatrix);
+    LEDMap_getNumberDisplay(minuteSecondDigit, fourthDigitMatrix);
 
     const int colStartPositions[4] = {3, 9, 17, 23};
 
@@ -502,11 +511,6 @@ static void updateClockDisplay(void)
         ledMatrix_setPixel(8, 15, LED_WHITE);
     }
     pthread_mutex_unlock(&ledScreenMutex);
-
-    LEDMap_freeDisplayArray(firstDigitMatrix);
-    LEDMap_freeDisplayArray(secondDigitMatrix);
-    LEDMap_freeDisplayArray(thirdDigitMatrix);
-    LEDMap_freeDisplayArray(fourthDigitMatrix);
 }
 
 static void* ledThread(void *vargp)

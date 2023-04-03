@@ -7,11 +7,11 @@
 #ifndef _LEDMAP_H_
 #define _LEDMAP_H_
 
+#define LED_TIME_ROW 7
+#define LED_TIME_COL 5
+
 // Returns a dynamically allocated array to a LED representation of the passed in number.
 // If an invalid number is passed in, it will return an array with all values being zero.
-int** LEDMap_getNumberDisplay(const int number);
-
-// Frees the dynamically allocated array returned by LED_getNumberDisplay.
-void LEDMap_freeDisplayArray(int **toFree);
+void LEDMap_getNumberDisplay(const int number, int timeMatrix[LED_TIME_ROW][LED_TIME_COL]);
 
 #endif
