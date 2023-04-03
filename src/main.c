@@ -12,6 +12,8 @@
 #include "clap/clapdection.h"
 #include "joystick/joystickcontrols.h"
 
+#include "include/potentiometer.h"
+
 #include <sys/resource.h>
 #include <unistd.h>
 #include <errno.h>
@@ -36,14 +38,21 @@ int main(void)
     LED_init(LED_LISTEN);
     AudioMixer_init();
     startBeatController();
+    Potstart();
     UDP_init();
 
     startMicDetection();
+
+    
+    
+
     stopMicDectection();
 
     UDP_cleanup();
+    Potcleanup();
     clearBeatController();
     AudioMixer_cleanup();
     LED_wait();
     
 }
+

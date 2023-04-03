@@ -8,5 +8,10 @@
 // Returns a value from 0 - 100 (inclusive) representing the percentage
 // of the way the potentiometer has been turned
 int Potentiometer_getReading(void);
+int getVoltageReading(char* path);
+void Potstart();
+void Potcleanup();
+void *PotStartUp();
+int getPotValue();
 
 #endif

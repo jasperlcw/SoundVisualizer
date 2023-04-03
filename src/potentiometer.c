@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "Utility.h"
+#include <pthread.h>
+
 
 #include "include/potentiometer.h"
 
@@ -8,8 +11,32 @@
 
 #define A2D_MAX_READING 4095
 
+static pthread_t Potthread;
+
+int PotReading = 0;
+
+//start the Pot thread
+void Potstart(){
+    pthread_create(&Potthread, NULL, PotStartUp, NULL);
+}
+//ends the Pot thread
+void Potcleanup(){
+    pthread_join(Potthread,NULL);
+   
+}
+
+void *PotStartUp(){
+    while (isRunning)
+    {
+        PotReading = getVoltageReading(A2D_FILE_POTENTIOMETER);
+        sleepForMs(100);
+    }
+    return NULL;
+    
+}
+
 // From potDriver.c
-static int getVoltageReading(char* path)
+int getVoltageReading(char* path)
 {
     // Open file
     FILE *f = fopen(path, "r");
@@ -30,11 +57,14 @@ static int getVoltageReading(char* path)
     return a2dReading;
 }
 
+int getPotValue(){
+    return PotReading;
+}
+
 // Returns a value from 0 - 100 (inclusive) representing the percentage
 // of the way the potentiometer has been turned
 int Potentiometer_getReading()
 {
-    double potReading = getVoltageReading(A2D_FILE_POTENTIOMETER);
-    double percentTurned = potReading / A2D_MAX_READING;
-    return percentTurned * 100;
+    double percentTurned = (double)PotReading / (double)A2D_MAX_READING;
+    return (int)(percentTurned * 100);
 }

@@ -5,11 +5,7 @@ import {setBoardWithScreen, createNewboard} from '../functions/board'
 
 const TimeVisualiser = ({timeBoard, setTimeBoard, screen, canvasRef}) => {
 
-    
-    const canvasWidth = 800;
-    const canvasHeight = 400;
     const maxBarHeight = 16;
-    const pixelDiameter = canvasHeight / maxBarHeight;
 
     useEffect(() =>{
         let newBoard = [];
@@ -19,24 +15,21 @@ const TimeVisualiser = ({timeBoard, setTimeBoard, screen, canvasRef}) => {
             newBoard = setBoardWithScreen(newBoard, currentScreen)
         }
         setTimeBoard(newBoard);
+        drawCanvas();
     },[screen])
-
-    useEffect(() => {
-        if(timeBoard){
-            drawCanvas();
-        }
-    },[screen])
-
 
     const drawCanvas = () =>{
         // draw the Time Visualiser
         // In pixels
+        console.log(timeBoard)
+        if(Object.keys(timeBoard).length === 0) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
         ctx.fillStyle = `rgb(${0}, ${0}, ${0})`
         ctx.rect(0, 0, canvas.width, canvas.height);
+        const pixelDiameter = canvas.height / maxBarHeight;
 
         ctx.fill();
 
@@ -65,7 +58,6 @@ const TimeVisualiser = ({timeBoard, setTimeBoard, screen, canvasRef}) => {
 
     return (
         <div>
-            <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={canvasWidth} height={canvasHeight}/>
         </div>
     );
 }

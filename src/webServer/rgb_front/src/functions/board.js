@@ -18,7 +18,7 @@ export const createNewboard = () =>{
 }
 
 
-export const setBoardWithSpectrum = (board, spectrumValues) => {
+export const setBoardWithSpectrum = (board, spectrumValues , color) => {
     const maxBarHeight = 16;
     for (let col = 0; col < spectrumValues.length && col < 32; col++) {
         let logValue = Math.log10(spectrumValues[col]) > 1 ? Math.log10(spectrumValues[col]) : 1;
@@ -27,6 +27,7 @@ export const setBoardWithSpectrum = (board, spectrumValues) => {
         for (let row = maxBarHeight - 1; row >= 0; row--) {
             if (currentIndex < barHeight) {
                 board[col][row].active = true;
+                board[col][row].color = screenColor[color];
             } else {
                 board[col][row].active = false;
             }
