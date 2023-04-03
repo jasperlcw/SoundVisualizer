@@ -1,6 +1,5 @@
 
 import { useEffect} from 'react';
-import './AudioVisualStyle.css';
 import {setBoardWithScreen, createNewboard} from '../functions/board'
 
 const TimeVisualiser = ({timeBoard, setTimeBoard, screen, canvasRef}) => {
