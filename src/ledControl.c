@@ -99,7 +99,7 @@ static void exportAndOut(int pinNumber)
         }
         fprintf(pFile, "%d", pinNumber);
         fclose(pFile);
-        sleepForMs(330);
+        sleepForMs(200);
 
         // Pin should now be exported, so reassign the gpioDirP file pointer
         gpioDirP = fopen(fileNameBuffer, "w"); // okay to be reassigned as it was NULL
