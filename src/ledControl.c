@@ -510,8 +510,8 @@ static void updateClockDisplay(void)
         }
 
         // Display colon 
-        ledMatrix_setPixel(6, 15, LED_WHITE);
-        ledMatrix_setPixel(8, 15, LED_WHITE);
+        ledMatrix_setPixel(6, 15, currentColor);
+        ledMatrix_setPixel(8, 15, currentColor);
     }
     pthread_mutex_unlock(&ledScreenMutex);
 }
