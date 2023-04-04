@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+static void copyColorHelper(int dest[LED_TIME_ROW][LED_TIME_COL], const int copyFrom[LED_TIME_ROW][LED_TIME_COL], const int color);
+
 // Matrtices are declared as [row][column]
 // Each number takes up LED_TIME_ROW rows and LED_TIME_COL columns
 static int LED_numZero[LED_TIME_ROW][LED_TIME_COL] = {
@@ -116,92 +118,61 @@ static int LED_numBlank[LED_TIME_ROW][LED_TIME_COL] = {
     { 0, 0, 0, 0, 0 }
 };
 
-void LEDMap_getNumberDisplay(const int number, int timeMatrix[LED_TIME_ROW][LED_TIME_COL])
+void LEDMap_getNumberDisplay(const int number, const int color, int timeMatrix[LED_TIME_ROW][LED_TIME_COL])
 {
     if (number == 0) {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numZero[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numZero, color);
     }
     else if (number == 1)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numOne[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numOne, color);
     }
     else if (number == 2)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numTwo[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numTwo, color);
     }
     else if (number == 3)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numThree[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numThree, color);
     }
     else if (number == 4)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numFour[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numFour, color);
     }
     else if (number == 5)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numFive[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numFive, color);
     }
     else if (number == 6)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numSix[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numSix, color);
     }
     else if (number == 7)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numSeven[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numSeven, color);
     }
     else if (number == 8)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numEight[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numEight, color);
     }
     else if (number == 9)
     {
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numNine[row][col];
-            }
-        }
+        copyColorHelper(timeMatrix, LED_numNine, color);
     }
     else {
         printf("DEBUG: Cannot find a mapping to an LED representation for the number %d\n", number);
-        for (int row = 0; row < LED_TIME_ROW; row++) {
-            for (int col = 0; col < LED_TIME_COL; col++) {
-                timeMatrix[row][col] = LED_numBlank[row][col];
+        copyColorHelper(timeMatrix, LED_numBlank, color);
+    }
+}
+
+static void copyColorHelper(int dest[LED_TIME_ROW][LED_TIME_COL], const int copyFrom[LED_TIME_ROW][LED_TIME_COL], const int color)
+{
+    for (int row = 0; row < LED_TIME_ROW; row++) {
+        for (int col = 0; col < LED_TIME_COL; col++) {
+            if (copyFrom[row][col] != 0) {
+                dest[row][col] = color;
+            } else {
+                dest[row][col] = 0; // equivalent to copyFrom[row][col] which is black
             }
         }
     }
