@@ -50,7 +50,9 @@ static void* dectectClap(){
 
         }
         else{
+            pthread_mutex_lock(&lock);
            
+
             ShortTerm = Mic_getShortHistory(&ShortLen);
             
             LongTerm = Mic_getLongHistory(&LongLen);
@@ -75,13 +77,14 @@ static void* dectectClap(){
                         prevmode = mode;
                          LED_setMode(0);
                     }
-                    pthread_mutex_lock(&lock);
+                    
                     clap = true;
-                    pthread_mutex_unlock(&lock);    
+                    
                     Mic_Longclear();
                 }
                 
             }
+            
 
             if(clap1){
                 difference = clock() - before;
@@ -92,6 +95,8 @@ static void* dectectClap(){
             }
             free(ShortTerm);
             free(LongTerm);
+            sleepForMs(20);
+            pthread_mutex_unlock(&lock);   
         }
     }
     return NULL;
