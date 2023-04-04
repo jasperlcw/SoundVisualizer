@@ -42,17 +42,5 @@ int main(void)
     UDP_init();
 
     startMicDetection();
-
-    
-    
-
-    stopMicDectection();
-
-    UDP_cleanup();
-    Potcleanup();
-    clearBeatController();
-    AudioMixer_cleanup();
-    LED_wait();
-    
 }
 
