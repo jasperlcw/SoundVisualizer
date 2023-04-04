@@ -7,6 +7,7 @@ const VolumeController = ({sendMessage, volume, volumeControl, setVolumeControl}
     useEffect(()=>{
     const Interval = setInterval(()=>{
         sendMessage(`setVolume ${volumeControl}`);
+        console.log(volumeControl)
     }, 500)
     return () => clearInterval(Interval);
     },[volumeControl]);
