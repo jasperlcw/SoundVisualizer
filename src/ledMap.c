@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void copyColorHelper(int source[LED_TIME_ROW][LED_TIME_COL], int dest[LED_TIME_ROW][LED_TIME_COL], const int color);
+static void copyColorHelper(int dest[LED_TIME_ROW][LED_TIME_COL], const int copyFrom[LED_TIME_ROW][LED_TIME_COL], const int color);
 
 // Matrtices are declared as [row][column]
 // Each number takes up LED_TIME_ROW rows and LED_TIME_COL columns
@@ -165,14 +165,14 @@ void LEDMap_getNumberDisplay(const int number, const int color, int timeMatrix[L
     }
 }
 
-static void copyColorHelper(int source[LED_TIME_ROW][LED_TIME_COL], int dest[LED_TIME_ROW][LED_TIME_COL], const int color)
+static void copyColorHelper(int dest[LED_TIME_ROW][LED_TIME_COL], const int copyFrom[LED_TIME_ROW][LED_TIME_COL], const int color)
 {
     for (int row = 0; row < LED_TIME_ROW; row++) {
         for (int col = 0; col < LED_TIME_COL; col++) {
-            if (dest[row][col] != 0) {
-                source[row][col] = color;
+            if (copyFrom[row][col] != 0) {
+                dest[row][col] = color;
             } else {
-                source[row][col] = 0; // equivalent to dest[row][col] which is black
+                dest[row][col] = 0; // equivalent to copyFrom[row][col] which is black
             }
         }
     }
