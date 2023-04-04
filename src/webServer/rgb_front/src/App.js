@@ -138,8 +138,9 @@ function App() {
     }
     else if (cmd[0] === "volume") {
       try{
+        console.log(cmd)
         setVolume(cmd[1]);
-        console.log(volume);
+
       }catch(error) {
         console.log(error);
       }

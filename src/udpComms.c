@@ -255,8 +255,8 @@ void* StartUDPServer(){
         }
         // set volume
         else if(strcmp(cmd[0], "setVolume") == 0){
-            int volume = AudioMixer_setVolume(atoi(cmd[1]));
-            sprintf(messageTx, "volume %d", volume);
+            AudioMixer_setVolume(atoi(cmd[1]));
+            sprintf(messageTx, "volume %d", AudioMixer_getVolume());
         }
         // get volume
         else if(strcmp(cmd[0], "getVolume") == 0){
