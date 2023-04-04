@@ -209,7 +209,7 @@ void* StartUDPServer(){
         else if(strcmp(cmd[0], "getSpectrum") == 0){
             double * spectrum = getSpectrum();
             int spectrumSize = getSpectrumCount();
-            int color = potentiometerToColour();
+            int color = Potentiometer_potToColor();
 
             displayMatrixOnLed(16, 32, spectrum);
             doubleArrayToJsonWithColor(spectrum, spectrumSize, "value", color);
@@ -274,31 +274,6 @@ void* StartUDPServer(){
     return 0;
 }
 
-int potentiometerToColour()
-{
-    // We have 8 LED settings, and a reading of 0 - 99
-    double partition = 100 / 8;
-    int reading = Potentiometer_getReading();
-
-    if (reading < partition * 1) {
-        return LED_BLACK;
-    } else if (reading < partition * 2) {
-        return LED_RED;
-    } else if (reading < partition * 3) {
-        return LED_GREEN;
-    } else if (reading < partition * 4) {
-        return LED_YELLOW;
-    } else if (reading < partition * 5) {
-        return LED_BLUE;
-    } else if (reading < partition * 6) {
-        return LED_MAGENTA;
-    } else if (reading < partition * 7) {
-        return LED_TEAL;
-    } else {
-        return LED_WHITE;
-    }
-} 
-
 // Helper function for displaying generated spectrum to the LED Panel
 static void displayMatrixOnLed(int row, int col, double *matrix)
 {
@@ -314,7 +289,7 @@ static void displayMatrixOnLed(int row, int col, double *matrix)
         int currentIndex = 0;
         for (int rowNum = 15; rowNum >= 0; rowNum--) {
             if (currentIndex < barHeight) {
-                ledMatrix[rowNum][colNum] = potentiometerToColour();
+                ledMatrix[rowNum][colNum] = Potentiometer_potToColor();
             }
             currentIndex++;
         }

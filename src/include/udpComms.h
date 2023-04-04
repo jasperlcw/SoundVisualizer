@@ -19,6 +19,4 @@ void UDP_cleanup(void);
 void* StartUDPServer();
 void* emitMessage();
 
-int potentiometerToColour();
-
 #endif

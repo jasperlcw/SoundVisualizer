@@ -8,6 +8,18 @@
   pointer-events: none;
 }
 
+.page-content {
+  height: 100%;
+  min-height: 20vh;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(6px + 1vmin);
+  color: white;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

@@ -157,8 +157,10 @@ function App() {
       <header className="App-header">
         {/*<img src={logo} className="App-logo" alt="logo" />*/}
         <p className = "titleText">TEAM <span style = {{ color: 'red' }}>R</span><span style = {{ color: 'green'}}>G</span><span style = {{ color: 'blue' }}>B</span></p>
+      </header>
 
-        <div style={{ display: 'flex' , width: '80%', justifyContent: "center", alignItems: "center"}}>
+      <div className="App-main">
+        <div style={{ display: 'flex' , width: '80%', justifyContent: "center", alignItems: "center", marginTop:"5%"}}>
           <div style={{ flex: 1, alignItems: "flex-end"}}>
             <button className = "custom-button" onClick={() => sendMessage("setPreviousMode")}> {"<"} </button>
           </div>
@@ -169,9 +171,7 @@ function App() {
             <button className = "custom-button" onClick={() => sendMessage("setNextMode")}> {">"} </button>
           </div>
         </div>
-      </header>
 
-      <div className="App-main">
         <div>
             <h1 style={{color:'red'}}>{errorMessage}</h1>
         </div>

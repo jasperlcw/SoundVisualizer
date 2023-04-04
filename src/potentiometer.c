@@ -5,27 +5,29 @@
 
 
 #include "include/potentiometer.h"
+#include "include/ledControl.h"
 
 // Potentiometer
 #define A2D_FILE_POTENTIOMETER "/sys/bus/iio/devices/iio:device0/in_voltage0_raw"
-
 #define A2D_MAX_READING 4095
 
-static pthread_t Potthread;
+static void *potThread(void *vargp);
+
+static pthread_t potThreadId;
 
 int PotReading = 0;
 
 //start the Pot thread
 void Potstart(){
-    pthread_create(&Potthread, NULL, PotStartUp, NULL);
+    pthread_create(&potThreadId, NULL, potThread, NULL);
 }
 //ends the Pot thread
 void Potcleanup(){
-    pthread_join(Potthread,NULL);
+    pthread_join(potThreadId,NULL);
    
 }
 
-void *PotStartUp(){
+void *potThread(void *vargp){
     while (isRunning)
     {
         PotReading = getVoltageReading(A2D_FILE_POTENTIOMETER);
@@ -68,3 +70,29 @@ int Potentiometer_getReading()
     double percentTurned = (double)PotReading / (double)A2D_MAX_READING;
     return (int)(percentTurned * 100);
 }
+
+
+int Potentiometer_potToColor()
+{
+    // We have 8 LED settings, and a reading of 0 - 99
+    double partition = 100 / 8;
+    int reading = Potentiometer_getReading();
+
+    if (reading < partition * 1) {
+        return LED_BLACK;
+    } else if (reading < partition * 2) {
+        return LED_RED;
+    } else if (reading < partition * 3) {
+        return LED_GREEN;
+    } else if (reading < partition * 4) {
+        return LED_YELLOW;
+    } else if (reading < partition * 5) {
+        return LED_BLUE;
+    } else if (reading < partition * 6) {
+        return LED_MAGENTA;
+    } else if (reading < partition * 7) {
+        return LED_TEAL;
+    } else {
+        return LED_WHITE;
+    }
+} 
