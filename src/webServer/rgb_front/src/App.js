@@ -83,6 +83,11 @@ function App() {
     return () => clearInterval(Interval);
   },[errorMessage, socket, ErrorInterval])
 
+  //send getVolume when init
+  useEffect(()=>{
+    sendMessage("getVolume");
+  },[]);
+
   useEffect(()=>{
     setNewCommend();
   },[messages])
