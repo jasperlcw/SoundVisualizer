@@ -8,6 +8,7 @@
 #include "include/currentTime.h"
 #include "include/ledControl.h"
 #include "include/ledMap.h"
+#include "include/potentiometer.h"
 #include "Utility.h"
 
 #include <fcntl.h>
@@ -467,10 +468,12 @@ static void updateClockDisplay(void)
     int thirdDigitMatrix[LED_TIME_ROW][LED_TIME_COL] = {0};
     int fourthDigitMatrix[LED_TIME_ROW][LED_TIME_COL] = {0};
 
-    LEDMap_getNumberDisplay(hourFirstDigit, firstDigitMatrix);
-    LEDMap_getNumberDisplay(hourSecondDigit, secondDigitMatrix);
-    LEDMap_getNumberDisplay(minuteFirstDigit, thirdDigitMatrix);
-    LEDMap_getNumberDisplay(minuteSecondDigit, fourthDigitMatrix);
+    int currentColor = Potentiometer_potToColor();
+
+    LEDMap_getNumberDisplay(hourFirstDigit, currentColor, firstDigitMatrix);
+    LEDMap_getNumberDisplay(hourSecondDigit, currentColor, secondDigitMatrix);
+    LEDMap_getNumberDisplay(minuteFirstDigit, currentColor, thirdDigitMatrix);
+    LEDMap_getNumberDisplay(minuteSecondDigit, currentColor, fourthDigitMatrix);
 
     const int colStartPositions[4] = {3, 9, 17, 23};
 
