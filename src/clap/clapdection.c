@@ -11,7 +11,7 @@
 #include "../include/ledControl.h"
 
 
-double threshold = 50;
+double threshold = 25;
 double upperthreshold = 300;
 static pthread_t detector;
 static bool run;
@@ -43,13 +43,15 @@ static void* dectectClap(){
     int timedurationmsec;
     int mode;
     int prevmode = 1;
+
     while(run){
 
-        if(!clapFeature){
+        if(!clapFeature || Iswait()){
             sleepForMs(2500);
 
         }
         else{
+                while(Mic_getNumSamplesTaken() < 500); 
             pthread_mutex_lock(&lock);
            
 
@@ -64,7 +66,7 @@ static void* dectectClap(){
                     printf("clap1,%f,%f,%f,%f\n",shortavg, longavg,threshold, upperthreshold   );
                     clap1 = true;
                     before = clock();
-                    Mic_Longclear();
+                    sleepForMs(500);
                 }
                 else{
                     clap1 = false;
@@ -79,8 +81,8 @@ static void* dectectClap(){
                     }
                     
                     clap = true;
-                    
-                    Mic_Longclear();
+                    sleepForMs(500);
+                   
                 }
                 
             }
@@ -109,8 +111,8 @@ static void* dectectClap(){
 void startMicDetection(){
     pthread_mutex_init(&lock, NULL);
     run = true;
-    Mic_startSampling();
-    while(Mic_getNumSamplesTaken() < 500); // small busy wait to let the buffer fill up
+    
+    // small busy wait to let the buffer fill up
     pthread_create(&detector,NULL,dectectClap,NULL);
 
 }

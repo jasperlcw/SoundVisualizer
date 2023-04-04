@@ -10,6 +10,7 @@
 #include "audioMixer/BeatController.h"
 #include "include/ledControl.h"
 #include "clap/clapdection.h"
+#include "clap/mic.h"
 #include "joystick/joystickcontrols.h"
 
 #include "include/potentiometer.h"
@@ -39,8 +40,11 @@ int main(void)
     AudioMixer_init();
     startBeatController();
     Potstart();
+        Mic_startSampling();
+    startMicDetection();
+
     UDP_init();
 
-    startMicDetection();
+    
 }
 
