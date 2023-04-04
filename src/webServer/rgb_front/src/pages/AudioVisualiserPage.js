@@ -12,7 +12,7 @@ import VolumeController from '../component/VolumeController'
 import {createNewboard} from '../functions/board';
 
 
-const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef, volume, setVolume}) => {
+const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef, volume, volumeControl, setVolumeControl}) => {
 
     //send getSpectrum to bbg
     useEffect(()=>{
@@ -47,7 +47,7 @@ const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage
             </div>
 
             <div style={{width: "60%", height: "50%", margin: "2% 1% 1% 1%", }}>
-                <VolumeController sendMessage = {sendMessage} volume = {volume} setVolume = {setVolume}/>
+                <VolumeController sendMessage = {sendMessage} volume = {volume} volumeControl = {volumeControl} setVolumeControl = {setVolumeControl}/>
             </div>
             {/* <div>
                 <BrightnessBar brightness = {brightness}/>

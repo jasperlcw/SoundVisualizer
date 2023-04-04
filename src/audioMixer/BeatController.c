@@ -7,16 +7,21 @@ static int bpm;
 wavedata_t presetSound[MAX_BEAT_SET];
 wavedata_t uploadSound;
 
+static bool isRunning;
+
 static pthread_t beating;
 void startBeatController(){
+    isRunning = true;
     pthread_create(&beating, NULL, &startBeat, NULL);
 }
 
 void clearBeatController(){
+    isRunning = false;
     pthread_join(beating, NULL);
 }
 
 void* startBeat(){
+    
     runCommand("config-pin p9_18 i2c");
     runCommand("config-pin p9_17 i2c");
 

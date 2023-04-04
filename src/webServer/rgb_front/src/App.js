@@ -37,7 +37,9 @@ function App() {
   const [mode, setMode] = useState("Do you guys not have phone?");
   const [ipAddress, setIpAddress] = useState('http://192.168.7.2:8080');
   const [confirmIp, setConfirmIp] = useState('');
+
   const [volume, setVolume] = useState(60);
+  const [volumeControl, setVolumeControl] = useState(60);
 
   const [errorTimer, setErrorTimer] = useState(0);
   const [ErrorInterval, setErrorInterval] = useState(null);
@@ -195,7 +197,7 @@ function App() {
           mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage} canvasRef = {canvasRef}/>) : 
           mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard}
              brightness = {brightness} sendMessage = {sendMessage} canvasRef = {canvasRef}
-             volume = {volume} setVolume = {setVolume}
+             volume = {volume} volumeControl = {volumeControl} setVolumeControl = {setVolumeControl}
              />):
           <div>
             <h1> Connection To BBG manually </h1>
