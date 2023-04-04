@@ -6,12 +6,13 @@ import './Page.css';
 import AudioVisualiser from "../component/AudioVisualiser";
 import BrightnessBar from '../component/BrightnessBar';
 import WaveFileUpload from '../component/WaveFileUpload'
+import VolumeController from '../component/VolumeController'
 
 // functions
 import {createNewboard} from '../functions/board';
 
 
-const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef}) => {
+const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef, volume, setVolume}) => {
 
     //send getSpectrum to bbg
     useEffect(()=>{
@@ -45,9 +46,12 @@ const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage
                 <canvas ref = {canvasRef} id="audioSpectrum" className="audioCanvas" width={1000} height={500}/>
             </div>
 
-            <div>
-                <BrightnessBar brightness = {brightness}/>
+            <div style={{width: "60%", height: "50%", margin: "2% 1% 1% 1%", }}>
+                <VolumeController sendMessage = {sendMessage} volume = {volume} setVolume = {setVolume}/>
             </div>
+            {/* <div>
+                <BrightnessBar brightness = {brightness}/>
+            </div> */}
 
             <div style={{width:"60%", margin: "1% 2% 1% 2%"}}>
                 <WaveFileUpload />

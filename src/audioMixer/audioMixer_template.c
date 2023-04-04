@@ -228,7 +228,7 @@ bool AudioMixer_setVolume(int newVolume)
         return false;
     }
     volume = newVolume;
-    printf("current volume: %d \n", newVolume);
+    // printf("current volume: %d \n", newVolume);
 
     long min, max;
     snd_mixer_t *volHandle;
