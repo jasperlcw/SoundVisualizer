@@ -4,11 +4,11 @@ import {useEffect, useState} from 'react';
 const VolumeController = ({sendMessage, volume, setVolume}) => {
     //send getVolume when init
 
-    const [volumeControl, setVolumeControl] = useState(0);
-    useEffect(()=>{
-        sendMessage("getVolume");
-        setVolumeControl(volume);
-    },[]);
+    const [volumeControl, setVolumeControl] = useState(volume);
+    // useEffect(()=>{
+    //     sendMessage("getVolume");
+    //     setVolumeControl(volume);
+    // },[]);
 
     //send getBrightness to bbg
     useEffect(()=>{
