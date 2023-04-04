@@ -1,7 +1,6 @@
 
 #include "Utility.h"
 
-bool isRunning = true;
 
 void sleepForMs(long long delayInMs)
 {

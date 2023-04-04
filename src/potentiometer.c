@@ -7,6 +7,8 @@
 #include "include/potentiometer.h"
 #include "include/ledControl.h"
 
+static bool isRunning;
+
 // Potentiometer
 #define A2D_FILE_POTENTIOMETER "/sys/bus/iio/devices/iio:device0/in_voltage0_raw"
 #define A2D_MAX_READING 4095
@@ -19,10 +21,12 @@ int PotReading = 0;
 
 //start the Pot thread
 void Potstart(){
+    isRunning = true;
     pthread_create(&potThreadId, NULL, potThread, NULL);
 }
 //ends the Pot thread
 void Potcleanup(){
+    isRunning = false;
     pthread_join(potThreadId,NULL);
    
 }
