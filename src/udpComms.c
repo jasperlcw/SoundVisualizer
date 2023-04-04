@@ -249,6 +249,16 @@ void* StartUDPServer(){
             LED_clearDisplay();
             sprintf(messageTx, "200");
         }
+        // set volume
+        else if(strcmp(cmd[0], "setVolume") == 0){
+            int volume = AudioMixer_setVolume(atoi(cmd[1]));
+            sprintf(messageTx, "volume %d", volume);
+        }
+        // get volume
+        else if(strcmp(cmd[0], "getVolume") == 0){
+            int volume = AudioMixer_getVolume();
+            sprintf(messageTx, "volume %d", volume);
+        }
 
         //press the screen
         else if(strcmp(cmd[0], "getScreen") == 0){
