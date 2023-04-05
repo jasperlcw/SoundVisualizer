@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
+#include "../include/ledControl.h"
 static void assertDirectioOk(enum eJoystickDirections direction);
 
 struct DirectionInfo {

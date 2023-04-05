@@ -11,7 +11,7 @@
 #include "../include/ledControl.h"
 
 
-double threshold = 25;
+double threshold = 15;
 double upperthreshold = 300;
 static pthread_t detector;
 static bool run;
