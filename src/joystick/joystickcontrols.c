@@ -5,6 +5,7 @@
 #include "joystick.h"
 #include "../audioMixer/audioMixer_template.h"
 #include "../Utility.h"
+#include "../include/ledControl.h"
 #define defualtBPM 80
 bool run;
 static pthread_t joystickthread;
@@ -19,30 +20,33 @@ static void* joystick(){
                 switch (i)
                 {
                 case 0://up case
+                    LED_nextMode();
              
-                     //sleepForMs(100);
+                     sleepForMs(100);
 
                     break;
                 case 1: //down case
-                  
-                     //sleepForMs(100);
+                    LED_PreviousMode();
+                    sleepForMs(100);
                     break;
                 case 2: //left case
-       
-                     //sleepForMs(100);
+                    changeAudioIn();
+                     sleepForMs(100);
                      break;
                 case 3: //right case
+                    changeAudioIn();
+                     sleepForMs(100);
              
                     // sleepForMs(100);
                      break;
                 case 4: //pressed
-                    changeAudioIn();
+                    //changeAudioIn();
 
 
 
 
 
-                    sleepForMs(100);
+                    //sleepForMs(100);
                      break;
                 default:
                     break;
