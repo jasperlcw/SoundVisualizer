@@ -198,7 +198,7 @@ function App() {
           mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage} canvasRef = {canvasRef}/>) : 
           mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard}
              brightness = {brightness} sendMessage = {sendMessage} canvasRef = {canvasRef}
-             volume = {volume} volumeControl = {volumeControl} setVolumeControl = {setVolumeControl}
+             volume = {volume} volumeControl = {volumeControl} setVolumeControl = {setVolumeControl} ipAddress = {ipAddress}
              />):
           <div>
             <h1> Connection To BBG manually </h1>

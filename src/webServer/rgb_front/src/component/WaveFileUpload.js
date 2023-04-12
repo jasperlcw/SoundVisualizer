@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 
-const WaveFileUpload = () => {
+const WaveFileUpload = ({ipAddress}) => {
 
     const [waveFile, setWaveFile] = useState(null);
     const [uploadComplete, setUploadComplete] = useState(true);
@@ -19,7 +19,7 @@ const WaveFileUpload = () => {
         const reader = new FileReader();
         reader.onload = () =>{
             const contents = reader.result;
-            const target = 'http://192.168.7.2:8080/upload';
+            const target = `${ipAddress}/upload`;
             const headers = {
                 'Content-Type': 'audio/wav'
             };

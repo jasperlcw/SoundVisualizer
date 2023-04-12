@@ -12,7 +12,7 @@ import VolumeController from '../component/VolumeController'
 import {createNewboard} from '../functions/board';
 
 
-const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef, volume, volumeControl, setVolumeControl}) => {
+const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage, canvasRef, volume, volumeControl, setVolumeControl, ipAddress}) => {
 
     //send getSpectrum to bbg
     useEffect(()=>{
@@ -54,7 +54,7 @@ const AudioVisualiserPage = ({spectrum, board, setBoard, brightness, sendMessage
             </div> */}
 
             <div style={{width:"60%", margin: "1% 2% 1% 2%"}}>
-                <WaveFileUpload />
+                <WaveFileUpload ipAddress = {ipAddress}/>
             </div>
         </div>
     )
