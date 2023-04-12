@@ -38,6 +38,9 @@ function App() {
   const [ipAddress, setIpAddress] = useState('http://192.168.7.2:8080');
   const [confirmIp, setConfirmIp] = useState('');
 
+  const [volume, setVolume] = useState(60);
+  const [volumeControl, setVolumeControl] = useState(60);
+
   const [errorTimer, setErrorTimer] = useState(0);
   const [ErrorInterval, setErrorInterval] = useState(null);
 
@@ -81,6 +84,11 @@ function App() {
     }, 1000)
     return () => clearInterval(Interval);
   },[errorMessage, socket, ErrorInterval])
+
+  //send getVolume when init
+  useEffect(()=>{
+    sendMessage("getVolume");
+  },[]);
 
   useEffect(()=>{
     setNewCommend();
@@ -128,6 +136,15 @@ function App() {
         console.log(error);
       }
     }
+    else if (cmd[0] === "volume") {
+      try{
+        console.log(cmd)
+        setVolume(cmd[1]);
+
+      }catch(error) {
+        console.log(error);
+      }
+    }
     else if (cmd[0] === "error") {
       try {
         setErrorMessage("can't connect to BBG Server");
@@ -135,6 +152,7 @@ function App() {
         console.log(error);
       }
     }
+
   }
 
   //update IP
@@ -178,7 +196,10 @@ function App() {
         {
           mode === "0" ? (<LedOffPage/>) : 
           mode === "1" ? (<DisplayTimePage timeBoard = {timeBoard} setTimeBoard = {setTimeBoard} screen = {screen} sendMessage = {sendMessage} canvasRef = {canvasRef}/>) : 
-          mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard} brightness = {brightness} sendMessage = {sendMessage} canvasRef = {canvasRef}/>):
+          mode === "2" ? (<AudioVisualiserPage spectrum = {spectrum} board = {board} setBoard = {setBoard}
+             brightness = {brightness} sendMessage = {sendMessage} canvasRef = {canvasRef}
+             volume = {volume} volumeControl = {volumeControl} setVolumeControl = {setVolumeControl}
+             />):
           <div>
             <h1> Connection To BBG manually </h1>
             <input className ="modeText" type = "text" value = {ipAddress} onChange = {handleIpChange}></input>

@@ -78,9 +78,10 @@ double* getBufferWithLen(int *length, int *index, Circlebuffer* buf){
 
 //deletes the buffer and frees memory associated with the buffer 
 void deleteBuffer(Circlebuffer* buf){
-    pthread_mutex_destroy(&lock);
+    pthread_mutex_lock(&lock);
     free(buf->buffer);
     buf->buffer = NULL;
     free(buf);
     buf = NULL;
+    pthread_mutex_unlock(&lock);
 }

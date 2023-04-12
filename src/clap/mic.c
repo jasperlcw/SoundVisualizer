@@ -5,8 +5,9 @@
 #include <stdbool.h>
 #include "circlebuffer.h"
 #include "mic.h"
+#include "clapdection.h"
 
-
+#include "../include/ledControl.h"
 #define MIC "/sys/bus/iio/devices/iio:device0/in_voltage1_raw"
 #define SHORT_TERM_SIZE 40
 #define LONG_TERM_SIZE 734
@@ -16,6 +17,7 @@ static Circlebuffer* ShortTermBuffer;
 static Circlebuffer* LongTermBuffer;
 static bool stop = false;
 static long long totalsamples = 0;
+static bool wait = false;
 static int readFromFileToScreen(char *fileName){
     FILE *pFile = fopen(fileName, "r");
     if (pFile == NULL) {
@@ -52,14 +54,37 @@ void* Sampler_startSamplingThread(){
     ShortTermBuffer = createBuffer(SHORT_TERM_SIZE);
     LongTermBuffer = createBuffer(LONG_TERM_SIZE);
     int val;
+    bool recreate = false;
+   
     //double voltage = 0;
     while(!stop){
+        if(LED_getMode() == 1){
+         
+            wait = true;
+            if(!recreate){
+                deleteBuffer(ShortTermBuffer);
+                deleteBuffer(LongTermBuffer);
+                recreate = true;
+                
+            }
 
-        val = readFromFileToScreen(MIC);
-        addBuffer(val, ShortTermBuffer);
-        addBuffer(val, LongTermBuffer);
-        sleepForMs(1);
-        totalsamples++;
+
+        }
+        else{
+            if(recreate){
+                ShortTermBuffer = createBuffer(SHORT_TERM_SIZE);
+                LongTermBuffer = createBuffer(LONG_TERM_SIZE);
+                recreate = false;
+                wait = false;
+            }
+       
+
+            val = readFromFileToScreen(MIC);
+            addBuffer(val, ShortTermBuffer);
+            addBuffer(val, LongTermBuffer);
+            sleepForMs(1);
+            totalsamples++;
+        }
     }
     deleteBuffer(ShortTermBuffer);
     deleteBuffer(LongTermBuffer);    
@@ -68,6 +93,7 @@ void* Sampler_startSamplingThread(){
 
 //starts the sampling thread 
 void Mic_startSampling(){
+    
     pthread_create(&reader,NULL, (void*)Sampler_startSamplingThread, NULL);
 }
 
@@ -106,4 +132,8 @@ void Mic_stopSampling(){
 void Mic_Longclear(){
     clearBuffer(LongTermBuffer);
     while(getlength(LongTermBuffer) < 400);
+}
+
+bool Iswait(){
+    return wait;
 }

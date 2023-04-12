@@ -17,6 +17,8 @@
 #include <math.h>
 #include <pthread.h>
 
+static bool isRunning;
+
 // const
 #define MSG_MAX_LEN 1024
 #define PORT        12345
@@ -31,6 +33,7 @@ static void displayMatrixOnLed(int row, int col, double *matrix);
 
 // Initializes the UDP thread.
 void UDP_init(void) {
+    isRunning = true;
     sem_init(&UDPRunBlocker, 0, 0);
     pthread_create(&UDPThreadID, NULL, StartUDPServer, NULL);
 
@@ -40,6 +43,7 @@ void UDP_init(void) {
 
 // Cleans up the UDP thread.
 void UDP_cleanup(void) {
+    isRunning = false;
     pthread_join(UDPThreadID, NULL);
     sem_post(&UDPRunBlocker);
 }
@@ -248,6 +252,16 @@ void* StartUDPServer(){
             LED_PreviousMode();
             LED_clearDisplay();
             sprintf(messageTx, "200");
+        }
+        // set volume
+        else if(strcmp(cmd[0], "setVolume") == 0){
+            AudioMixer_setVolume(atoi(cmd[1]));
+            sprintf(messageTx, "volume %d", AudioMixer_getVolume());
+        }
+        // get volume
+        else if(strcmp(cmd[0], "getVolume") == 0){
+            int volume = AudioMixer_getVolume();
+            sprintf(messageTx, "volume %d", volume);
         }
 
         //press the screen

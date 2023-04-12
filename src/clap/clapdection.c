@@ -11,7 +11,7 @@
 #include "../include/ledControl.h"
 
 
-double threshold = 50;
+double threshold = 15;
 double upperthreshold = 300;
 static pthread_t detector;
 static bool run;
@@ -43,14 +43,18 @@ static void* dectectClap(){
     int timedurationmsec;
     int mode;
     int prevmode = 1;
+
     while(run){
 
-        if(!clapFeature){
+        if(!clapFeature || Iswait()){
             sleepForMs(2500);
 
         }
         else{
+                while(Mic_getNumSamplesTaken() < 500); 
+            pthread_mutex_lock(&lock);
            
+
             ShortTerm = Mic_getShortHistory(&ShortLen);
             
             LongTerm = Mic_getLongHistory(&LongLen);
@@ -62,7 +66,7 @@ static void* dectectClap(){
                     printf("clap1,%f,%f,%f,%f\n",shortavg, longavg,threshold, upperthreshold   );
                     clap1 = true;
                     before = clock();
-                    Mic_Longclear();
+                    sleepForMs(500);
                 }
                 else{
                     clap1 = false;
@@ -75,13 +79,14 @@ static void* dectectClap(){
                         prevmode = mode;
                          LED_setMode(0);
                     }
-                    pthread_mutex_lock(&lock);
+                    
                     clap = true;
-                    pthread_mutex_unlock(&lock);    
-                    Mic_Longclear();
+                    sleepForMs(500);
+                   
                 }
                 
             }
+            
 
             if(clap1){
                 difference = clock() - before;
@@ -92,6 +97,8 @@ static void* dectectClap(){
             }
             free(ShortTerm);
             free(LongTerm);
+            sleepForMs(20);
+            pthread_mutex_unlock(&lock);   
         }
     }
     return NULL;
@@ -104,8 +111,8 @@ static void* dectectClap(){
 void startMicDetection(){
     pthread_mutex_init(&lock, NULL);
     run = true;
-    Mic_startSampling();
-    while(Mic_getNumSamplesTaken() < 500); // small busy wait to let the buffer fill up
+    
+    // small busy wait to let the buffer fill up
     pthread_create(&detector,NULL,dectectClap,NULL);
 
 }

@@ -21,4 +21,7 @@ long long Mic_getNumSamplesTaken();
 
 //clears the long term buffer
 void Mic_Longclear();
+
+bool Iswait();
+
 #endif

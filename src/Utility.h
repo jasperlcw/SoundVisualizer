@@ -14,7 +14,6 @@
 #include <stdbool.h>
 
 
-extern bool isRunning;
 
 void sleepForMs(long long delayInMs);
 void runCommand(char* command);

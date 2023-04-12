@@ -30,6 +30,8 @@ sem_t sem;
 static unsigned long playbackBufferSize = 0;
 static short *playbackBuffer = NULL;
 
+static bool isRunning;
+
 typedef struct {
     // A pointer to a previously allocated sound bite (wavedata_t struct).
     // Note that many different sound-bite slots could share the same pointer
@@ -52,6 +54,7 @@ static int volume = 0;
 
 void AudioMixer_init(void)
 {
+    isRunning = true;
     AudioMixer_setVolume(DEFAULT_VOLUME);
 
     //init mutex
@@ -186,6 +189,8 @@ void AudioMixer_cleanup(void)
 {
     printf("Stopping audio...\n");
 
+    isRunning = false;
+
     // Stop the PCM generation thread
     stopping = true;
     pthread_join(playbackThreadId, NULL);
@@ -228,7 +233,7 @@ bool AudioMixer_setVolume(int newVolume)
         return false;
     }
     volume = newVolume;
-    printf("current volume: %d \n", newVolume);
+    // printf("current volume: %d \n", newVolume);
 
     long min, max;
     snd_mixer_t *volHandle;
