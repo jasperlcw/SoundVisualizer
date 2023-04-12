@@ -40,7 +40,7 @@ int main(void)
     AudioMixer_init();
     startBeatController();
     Potstart();
-        Mic_startSampling();
+    Mic_startSampling();
     startMicDetection();
 
     UDP_init();
