@@ -377,7 +377,7 @@ void startSpectrumThread(){
    
 
     // build Spectrum with 512 levels of freq
-    fftwCount = 500;
+    fftwCount = 512;
 
     fftwIn = (double*) fftw_malloc(sizeof (double) * playbackBufferSize);
     fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) *playbackBufferSize);
@@ -437,10 +437,6 @@ void* generateSpectrum(){
               
                 fftwIn[i] = (buf[index] - 1800) *1.25/1795;
                 //printf("%f\n",fftwIn[i]);
-                
-                
-                
-
 
             }
             free(buf);
